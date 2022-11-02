@@ -73,8 +73,9 @@ void fct_initScale()
   //settings ----- todo
   const uint8_t DEFAULT_ADC_SPEED = 10; //10 or 80
   //--------
-  scale.begin(0, 64, DEFAULT_ADC_SPEED);
+  scale.begin(0, 128, DEFAULT_ADC_SPEED);
   scale.calibrateADC();
+
 
   // //Apply scale options we got from EEPROM
   // scale.zeroRange = (float)settings.zeroRange / 100.0;
@@ -173,9 +174,11 @@ uint32_t lastVinRead=0;
 void loop()
 {
   button_loop();
-  if ((millis() - u_time >= 50) && (!timermode))
+  if ((millis() - u_time >= 30))
   {
-      fct_showGrammes(scale.readUnits(5));
+      double v=scale.readUnits(1);
+      fct_showGrammes(v);
+      // Serial.print(v);Serial.println(": readUnits");
       u_time = millis(); 
   }
 
@@ -186,11 +189,11 @@ void loop()
   // }
 
   
-  if (millis() - lastVinRead >=batReadInterval) {
+  if (millis() - lastVinRead >=(batReadInterval*1000)) {
         vinVoltage = monitoring.getVoltage();
-        resolutionLevel = monitoring.getResolutionLevel(vinVoltage);
+        // resolutionLevel = monitoring.getResolutionLevel(vinVoltage);
         lastVinRead = millis(); 
-        Serial.print(vinVoltage);Serial.print("V (");Serial.print(resolutionLevel);Serial.println(")");
+        // Serial.print(vinVoltage);Serial.print("V (");Serial.print(resolutionLevel);Serial.println(")");
   }
 
   // put your main code here, to run repeatedly:

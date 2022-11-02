@@ -100,7 +100,7 @@ class SCALE
 
 
     //COFFEE FEATURES
-    bool autoTare = false; // automatically tares the scale after settling time (see stableWeightSampleSize).
+    bool autoTare = true; // automatically tares the scale after settling time (see stableWeightSampleSize).
     bool autoTareNegative = false; // automatically tares the scale if returned value is <0 WITHOUT waiting to settle!
     bool autoTareUsed = false; //will auto tare only once after each manual tare.
     float autoTareMinWeight = 10.0; //only auto tare if >autoTareMinWeight grams 
@@ -109,11 +109,11 @@ class SCALE
 
 
     int32_t getTimer(); //we allow negative values here since we allow a built in delay
-    void startTimer(bool manual = false);
-    void checkStopTimer();
-    void stopTimer();
-    void resetTimer();
-    void startStopResetTimer();
+    // void startTimer(bool manual = false);
+    // void checkStopTimer();
+    // void stopTimer();
+    // void resetTimer();
+    // void startStopResetTimer();
     uint8_t autoStartTimer = 0; //0 == off , 1==immediately after tare, 2==automaticaly with 1st drop
     bool autoStopTimer = false;
     bool manualTimer = true; //start with true to avoid trigger on boot

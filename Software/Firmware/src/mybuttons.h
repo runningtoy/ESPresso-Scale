@@ -50,10 +50,12 @@ Button2 buttonTimer;
 
 void click_buttonTare(Button2& btn) {
     fct_powerResetTimer();
+    scale.tare(2, false, true, false);
     Serial.println("buttonTare click\n");
 }
 void longClick_buttonTare(Button2& btn) {
     fct_powerResetTimer();
+    scale.tare(2, false, true, false);
     Serial.println("buttonTare long click\n");
 }
 void doubleClick_buttonTare(Button2& btn) {
@@ -77,15 +79,21 @@ void doubleClick_buttonTimer(Button2& btn) {
 /////////////////////////////////////////////////////////////////
 
 void button_setup() {
-  buttonTare.begin(TARE_BUTTON_PIN,INPUT_PULLUP,false);
   buttonTimer.begin(POWER_BUTTON_PIN,INPUT_PULLUP,false);
-
-  buttonTare.setLongClickTime(MY_LONGCLICK_MS);
-  buttonTare.setDoubleClickTime(MY_DOUBLECLICK_MS);
+  
   buttonTimer.setLongClickTime(MY_LONGCLICK_MS);
   buttonTimer.setDoubleClickTime(MY_DOUBLECLICK_MS);
-
-
+  
+  buttonTimer.setLongClickHandler(longClick_buttonTimer);  
+  buttonTimer.setClickHandler(click_buttonTimer);  
+  //-----------------------------------------------
+  buttonTare.begin(TARE_BUTTON_PIN,INPUT_PULLUP,false);
+  
+  buttonTare.setLongClickTime(MY_LONGCLICK_MS);
+  buttonTare.setDoubleClickTime(MY_DOUBLECLICK_MS);
+  
+  buttonTare.setLongClickHandler(longClick_buttonTare);  
+  buttonTare.setClickHandler(click_buttonTare);  
 
 }
 

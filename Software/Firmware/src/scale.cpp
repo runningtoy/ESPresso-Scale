@@ -90,116 +90,116 @@ uint8_t SCALE::getSmoothing() {
 }
 
 
-int32_t SCALE::getTimer()
-{
-  //watch out, our main variables are unsigned!
-  int32_t timerCounter = 0;
-  if (timerMillis > 0) {
-    //timer has been stopped but has value saved
-    timerCounter = timerMillis;    
-  } else if (timerMillisRunning > 0) {
-    //timer is still running, so return our timerMillisRunning value
-    timerCounter = timerMillisRunning;
-  } else {
-    return 0;
-  }
+// int32_t SCALE::getTimer()
+// {
+//   //watch out, our main variables are unsigned!
+//   int32_t timerCounter = 0;
+//   if (timerMillis > 0) {
+//     //timer has been stopped but has value saved
+//     timerCounter = timerMillis;    
+//   } else if (timerMillisRunning > 0) {
+//     //timer is still running, so return our timerMillisRunning value
+//     timerCounter = timerMillisRunning;
+//   } else {
+//     return 0;
+//   }
 
-  //if you don't like returning negative values, uncomment the following block
-//  if (timerCounter >= timerDelay) {
-    timerCounter -= timerDelay;
-//  } else {
-//    timerCounter = 0;
-//  }
+//   //if you don't like returning negative values, uncomment the following block
+// //  if (timerCounter >= timerDelay) {
+//     timerCounter -= timerDelay;
+// //  } else {
+// //    timerCounter = 0;
+// //  }
   
-  return timerCounter;
-}
+//   return timerCounter;
+// }
 
-void SCALE::startStopResetTimer() {
-  //this is a simple function tha cycles all the timer statues:
-  //zeroed(reseted) -> start -> stop -> reset
-  if (timerRunning) {
-    stopTimer();
-  } else if (!timerRunning && (timerMillis > 0)) {
-    resetTimer();  
-  } else {
-    startTimer(true);
-  }  
-}
+// void SCALE::startStopResetTimer() {
+//   //this is a simple function tha cycles all the timer statues:
+//   //zeroed(reseted) -> start -> stop -> reset
+//   if (timerRunning) {
+//     stopTimer();
+//   } else if (!timerRunning && (timerMillis > 0)) {
+//     resetTimer();  
+//   } else {
+//     startTimer(true);
+//   }  
+// }
 
-void SCALE::startTimer(bool manual)
-{
-   Serial.print("starting timer with manual option "); Serial.println(manual);
-  manualTimer = manual; //manual timer running
-  timerMillis = 0;
-  timerStopMillis = 0;  
-  timerMillisRunning = 0;
-  timerStartMillis = millis();
-  timerRunning = true;
-}
-
-
-void SCALE::stopTimer()
-{
-   Serial.println("actually stopping timer");
-  if (timerStopMillis == 0) {
-    timerStopMillis = millis();
-  }
-  manualTimer = false;
-  if (timerStopMillis < timerStartMillis) {
-    //avoid overflow
-    timerStopMillis = timerStartMillis;
-  }
-  timerMillis = timerStopMillis - timerStartMillis; //freeze value
-  timerStartMillis = 0;
-  timerMillisRunning = 0;
-  timerRunning = false;
-}
-
-void SCALE::checkStopTimer()
-{
-  if (hasSettledQuick && lastUnitsRead >= timerStopWeight) {
-    stopTimer();
-  } else {
-    // do not stop yet, just keep the time
-    timerStopMillis = millis();
-    timerMillisRunning = timerStopMillis - timerStartMillis;
-  }
-}
+// void SCALE::startTimer(bool manual)
+// {
+//    Serial.print("starting timer with manual option "); Serial.println(manual);
+//   manualTimer = manual; //manual timer running
+//   timerMillis = 0;
+//   timerStopMillis = 0;  
+//   timerMillisRunning = 0;
+//   timerStartMillis = millis();
+//   timerRunning = true;
+// }
 
 
-void SCALE::resetTimer()
-{  
-   Serial.println("resetting timer");
-  stopTimer();
-  timerMillis = 0;
-  timerStopMillis = 0;
-  manualTimer = false;
-}
+// void SCALE::stopTimer()
+// {
+//    Serial.println("actually stopping timer");
+//   if (timerStopMillis == 0) {
+//     timerStopMillis = millis();
+//   }
+//   manualTimer = false;
+//   if (timerStopMillis < timerStartMillis) {
+//     //avoid overflow
+//     timerStopMillis = timerStartMillis;
+//   }
+//   timerMillis = timerStopMillis - timerStartMillis; //freeze value
+//   timerStartMillis = 0;
+//   timerMillisRunning = 0;
+//   timerRunning = false;
+// }
+
+// void SCALE::checkStopTimer()
+// {
+//   if (hasSettledQuick && lastUnitsRead >= timerStopWeight) {
+//     stopTimer();
+//   } else {
+//     // do not stop yet, just keep the time
+//     timerStopMillis = millis();
+//     timerMillisRunning = timerStopMillis - timerStartMillis;
+//   }
+// }
+
+
+// void SCALE::resetTimer()
+// {  
+//    Serial.println("resetting timer");
+//   stopTimer();
+//   timerMillis = 0;
+//   timerStopMillis = 0;
+//   manualTimer = false;
+// }
 
 
 
-void SCALE::updateTimer()
-{
-  if (!manualTimer && autoStartTimer == 1 && timerStartMillis == 0 && timerMillis == 0 && (lastUnitsRead >= timerStartWeight)) {
-    //start timer
-    if (roc > rocStartTimer) {
-      startTimer();
-    }
-  }
-  if (!manualTimer && autoStartTimer == 1 && timerStartMillis > 0 && (lastUnitsRead < timerStartWeight)) {
-    //don't care...false positive
-     Serial.print("resetting timer because lastUnitsRead is "); Serial.println(lastUnitsRead);
-    resetTimer();
-  }
-  if (!manualTimer && autoStopTimer && timerStartMillis > 0 && roc <= rocStopTimer) {
-    //stop timer, we are done
-     Serial.println("should we stop the timer ?");
-    checkStopTimer();
-  }
-  if (timerStartMillis > 0) {
-    timerMillis = millis() - timerStartMillis;    
-  }
-}
+// void SCALE::updateTimer()
+// {
+//   if (!manualTimer && autoStartTimer == 1 && timerStartMillis == 0 && timerMillis == 0 && (lastUnitsRead >= timerStartWeight)) {
+//     //start timer
+//     if (roc > rocStartTimer) {
+//       startTimer();
+//     }
+//   }
+//   if (!manualTimer && autoStartTimer == 1 && timerStartMillis > 0 && (lastUnitsRead < timerStartWeight)) {
+//     //don't care...false positive
+//      Serial.print("resetting timer because lastUnitsRead is "); Serial.println(lastUnitsRead);
+//     resetTimer();
+//   }
+//   if (!manualTimer && autoStopTimer && timerStartMillis > 0 && roc <= rocStopTimer) {
+//     //stop timer, we are done
+//      Serial.println("should we stop the timer ?");
+//     checkStopTimer();
+//   }
+//   if (timerStartMillis > 0) {
+//     timerMillis = millis() - timerStartMillis;    
+//   }
+// }
 
 
 bool  SCALE::tare(byte type, bool saveWeight, bool autoTare, bool calibrate) 
@@ -219,7 +219,7 @@ bool  SCALE::tare(byte type, bool saveWeight, bool autoTare, bool calibrate)
   lastStableWeight = 0;
   if (!autoTare) {
     autoTareUsed = false;
-    resetTimer();
+    // resetTimer();
     zeroTrackingUntil = millis() + 1000; //enable zeroTracking for 1s
   }
   return true;
@@ -285,16 +285,16 @@ double SCALE::readUnits(uint8_t samples)
     if (hasSettled) {
        Serial.println("Auto tare is enabled, taring...");      
       tare(0,true,true,false); //do a quick tare, save the weight to history, but without adc calibration
-      if (autoStartTimer == 2) {
-        startTimer();
-      } else if (autoStartTimer ==1) {
-        resetTimer();
-      }
+      // if (autoStartTimer == 2) {
+      //   startTimer();
+      // } else if (autoStartTimer ==1) {
+      //   resetTimer();
+      // }
       autoTareUsed = true;
       units = 0.0;
     } else {      
       //we are waiting for hasSettled to do auto tare, reset timer.
-      resetTimer();
+      // resetTimer();
     }
   }
 
@@ -321,7 +321,7 @@ double SCALE::readUnits(uint8_t samples)
   }
   lastUnitsRead = units;
   if (!calibrationMode) {
-    updateTimer();
+    // updateTimer();
   }
 
   bool zTrTare = false;
