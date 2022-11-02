@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////
 
-// #include "Button2.h";
-#include <ButtonHandler.h>
+#include "Button2.h"
+
 
 
 
@@ -14,27 +14,13 @@ void fct_powerResetTimer(int t);
 
 /////////////////////////////////////////////////////////////////
 
-#define SHORT_CLICK_EVENT_INTERVAL 150
-#define DOUBLE_CLICK_EVENT_INTERVAL 300
-#define LONG_CLICK_EVENT_INTERVAL 500
-#define RATTLE_VALUE 200
+#define MY_LONGCLICK_MS  500
+#define MY_DOUBLECLICK_MS 700
 
-ButtonHandler buttonTare(
-  TARE_BUTTON_PIN,
-  SHORT_CLICK_EVENT_INTERVAL,
-  DOUBLE_CLICK_EVENT_INTERVAL,
-  LONG_CLICK_EVENT_INTERVAL,
-  RATTLE_VALUE
-);
 
-ButtonHandler buttonTimer(
-  POWER_BUTTON_PIN,
-  SHORT_CLICK_EVENT_INTERVAL,
-  DOUBLE_CLICK_EVENT_INTERVAL,
-  LONG_CLICK_EVENT_INTERVAL,
-  RATTLE_VALUE
-);
 
+Button2 buttonTare;
+Button2 buttonTimer;
 
 
 /////////////////////////////////////////////////////////////////
@@ -61,46 +47,52 @@ ButtonHandler buttonTimer(
 //     }
 // }
 
+
+void click_buttonTare(Button2& btn) {
+    fct_powerResetTimer();
+    Serial.println("buttonTare click\n");
+}
+void longClick_buttonTare(Button2& btn) {
+    fct_powerResetTimer();
+    Serial.println("buttonTare long click\n");
+}
+void doubleClick_buttonTare(Button2& btn) {
+    fct_powerResetTimer();
+    Serial.println("buttonTare double click\n");
+}
+
+void click_buttonTimer(Button2& btn) {
+    fct_powerResetTimer();
+    Serial.println("buttonTimer click\n");
+}
+void longClick_buttonTimer(Button2& btn) {
+    fct_powerResetTimer();
+    Serial.println("buttonTimer long click\n");
+}
+void doubleClick_buttonTimer(Button2& btn) {
+    fct_powerResetTimer();
+    Serial.println("buttonTimer double click\n");
+}
+
 /////////////////////////////////////////////////////////////////
 
-void button_setup() {}
+void button_setup() {
+  buttonTare.begin(TARE_BUTTON_PIN,INPUT_PULLUP,false);
+  buttonTimer.begin(POWER_BUTTON_PIN,INPUT_PULLUP,false);
+
+  buttonTare.setLongClickTime(MY_LONGCLICK_MS);
+  buttonTare.setDoubleClickTime(MY_DOUBLECLICK_MS);
+  buttonTimer.setLongClickTime(MY_LONGCLICK_MS);
+  buttonTimer.setDoubleClickTime(MY_DOUBLECLICK_MS);
+
+
+
+}
 
 /////////////////////////////////////////////////////////////////
 
 void button_loop() {
-  buttonTare.processEvents();
-  buttonTimer.processEvents();
-  switch (buttonTare.getEvent()) {
-    case ButtonHandler::EVENT_SHORT_CLICK:
-      fct_powerResetTimer();
-      Serial.println("buttonTare short");
-      scale.tare(2, false, true, true); 
-      break;
-    case ButtonHandler::EVENT_DOUBLE_CLICK:
-      fct_powerResetTimer();
-      Serial.println("buttonTare double");
-      break;
-    case ButtonHandler::EVENT_LONG_CLICK:
-      fct_powerResetTimer();
-      Serial.println("buttonTare long");
-      // scale.tare(0, false, false, false);
-      break;
-  }
-  switch (buttonTimer.getEvent()) {
-    case ButtonHandler::EVENT_SHORT_CLICK:
-      fct_powerResetTimer();
-      start_timer=millis();
-      Serial.println("buttonTimer short");
-      break;
-    case ButtonHandler::EVENT_DOUBLE_CLICK:
-      fct_powerResetTimer();
-      Serial.println("buttonTimer double");
-      timermode=!timermode;
-      break;
-    case ButtonHandler::EVENT_LONG_CLICK:
-      fct_powerResetTimer();
-      Serial.println("buttonTimer long");
-      break;
-  }
+  buttonTare.loop();
+  buttonTimer.loop();
 }
 
