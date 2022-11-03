@@ -14,6 +14,7 @@
 SCALE scale = SCALE(ADC_PDWN_PIN, ADC_SCLK_PIN, ADC_DOUT_PIN, ADC_A0_PIN, ADC_SPEED_PIN, ADC_GAIN1_PIN, ADC_GAIN0_PIN, ADC_TEMP_PIN);
 Adafruit_SSD1306 display(DISPLAY_WIDTH, DISPLAY_HEIGHT, &Wire, -1);
 Ticker powerTicker;
+Ticker logoTicker;
 uint32_t powertimer=POWERDOWNTIMER;
 MONITORING monitoring = MONITORING(23,36); //enable mosfet pin = 23, vin on gpio36
 bool timermode=false;
@@ -21,6 +22,15 @@ uint32_t start_timer=0;
 
 #include "mybuttons.h"
 
+int count=26; 
+void fct_bootLogo(){
+  display.clearDisplay();
+  // display count animation image
+  display.drawBitmap(int((128-32)/2), 0, waitLogo[count], 32, 32, WHITE);
+  display.display();
+  count--;
+  if (count<0) count = 26;
+}
 
 
 
@@ -108,6 +118,21 @@ void fct_showText(String text) {
   delay(100);
 }
 
+charging getSOCIdx() {
+  if (vinVoltage < VIN_MIN) {
+    return BAT_EMPTY;
+  } else if (vinVoltage < VIN_LOW) {
+    return BAT_25;
+  } else if (vinVoltage < VIN_OK) {
+    return BAT_50;
+  } else if (vinVoltage < VIN_GOOD) {
+    return BAT_100;
+  } else {
+    return BAT_EMPTY;
+  }
+  return BAT_EMPTY;
+}
+
 void fct_showText(String text,String text2) {
   display.clearDisplay();
   display.setTextColor(SSD1306_WHITE);
@@ -118,20 +143,43 @@ void fct_showText(String text,String text2) {
   display.setTextSize(1);
   display.setCursor(10, DISPLAY_HEIGHT-8);
   display.println(text2);
+  display.drawBitmap(int((128-25)), 16, battery[getSOCIdx()], 16, 16, WHITE);
   display.display();      // Show initial text
   delay(100);
 }
+
+
+void fct_showText(String text,charging soc) {
+  display.clearDisplay();
+  display.setTextColor(SSD1306_WHITE);
+  // display.setFont(&FreeSans12pt7b);
+  display.setTextSize(2);
+  display.setCursor(10, 2);
+  display.println(text);
+  // charging idx=getSOCIdx();
+  display.drawBitmap(int((128-120)), 16, battery[getSOCIdx()], 16, 16, WHITE);
+
+  // display.setTextSize(1);
+  // display.setCursor(10, DISPLAY_HEIGHT-8);
+  // display.println(text2);
+  display.display();      // Show initial text
+  delay(100);
+}
+
+
 
 void fct_showNumber(double f) {
    fct_showText(String(fct_roundToDecimal(f,2)));
 }
 
 void fct_showGrammes(double f) {
-   fct_showText(String(fct_roundToDecimal(f,2))+" g","Bat: "+String(fct_roundToDecimal(vinVoltage,1)));
+  //  fct_showText(String(fct_roundToDecimal(f,2))+" g","Bat: "+String(fct_roundToDecimal(vinVoltage,1)));
+   fct_showText(String(fct_roundToDecimal(f,2))+" g","Bat: "+monitoring.getResolutionLevel(vinVoltage));
 }
 
 void fct_showTime(double f) {
-   fct_showText(String(fct_roundToDecimal(f,2))+" s","Bat: "+String(fct_roundToDecimal(vinVoltage,1)));
+  //  fct_showText(String(fct_roundToDecimal(f,2))+" s","Bat: "+String(fct_roundToDecimal(vinVoltage,1)));
+   fct_showText(String(fct_roundToDecimal(f,2))+" s","Bat: "+monitoring.getResolutionLevel(vinVoltage));
 }
 
 void fct_setupDisplay(){
@@ -151,18 +199,20 @@ void setup() {
   fct_setupDisplay();
   Serial.println("Setup: fct_setupDisplay");
   //---------------------
-  fct_showText("Init...");
+  // fct_showText("Init...");
+  logoTicker.attach_ms(40, fct_bootLogo);
   button_setup();
   fct_powerResetTimer();
   powerTicker.attach(1, fct_powerDownTicker);
   // ---------------------
-  fct_showText("Scale...");
+  // fct_showText("Scale...");
   fct_initScale();
   Serial.println("Setup: fct_initScale");
   //---------------------
-  fct_showText("Tare...");
+  // fct_showText("Tare...");
   scale.tare(2, false, true, true);
   Serial.println("Setup: scale.tare");
+  logoTicker.detach();
   //---------------------
 
   
