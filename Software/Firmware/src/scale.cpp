@@ -444,6 +444,7 @@ void SCALE::calibrate(float targetWeight, int maxMillis, float targetDiff)
    Serial.println("calibrating...");
   for (uint8_t i=0;i<5;i++){
     tare(0,false,true,true);
+    delay(100);
   }
   uint32_t calibrationStartTime = millis();
   float weight = 0.0;
@@ -452,8 +453,9 @@ void SCALE::calibrate(float targetWeight, int maxMillis, float targetDiff)
   stableWeightDiff = 1.0;
   //loop until settled
   uint32_t elapsedTime = millis() - calibrationStartTime;  
-  while (!hasSettled || weight < 10.0) {
-    weight = readUnits(1);    
+  while (!hasSettled || abs(weight) < 10.0) {
+    weight = readUnits(1);   
+    Serial.println("weight:" + String(weight)); 
     elapsedTime = millis() - calibrationStartTime;
     if (elapsedTime > maxMillis) {
        Serial.println("calibration failed");

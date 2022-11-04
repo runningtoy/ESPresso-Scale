@@ -10,6 +10,8 @@
 #include "scale.h"
 #define ADS1232
 #include "MONITORING.h"
+#include "ArduinoNvs.h"
+
 SCALE scale = SCALE(ADC_PDWN_PIN, ADC_SCLK_PIN, ADC_DOUT_PIN, ADC_A0_PIN, ADC_SPEED_PIN, ADC_GAIN1_PIN, ADC_GAIN0_PIN, ADC_TEMP_PIN);
 Adafruit_SSD1306 display(DISPLAY_WIDTH, DISPLAY_HEIGHT, &Wire, -1);
 Ticker powerTicker;
@@ -18,6 +20,8 @@ uint32_t powertimer=POWERDOWNTIMER;
 MONITORING monitoring = MONITORING(23,36); //enable mosfet pin = 23, vin on gpio36
 bool timermode=false;
 uint32_t start_timer=0;
+uint32_t calFactorULong=0;
+bool do_calibration=false;
 
 #include "mybuttons.h"
 
@@ -42,6 +46,7 @@ float fct_roundToDecimal(double value, int dec)
 }
 
 void fct_powerDown(){
+  NVS.close();
   digitalWrite(POWERLATCH, LOW);
   digitalWrite(LED, LOW);
 }
@@ -155,6 +160,22 @@ void fct_showText(String text,String text2) {
   delay(100);
 }
 
+void fct_callCalibrateScale(){
+  do_calibration=true;
+}
+
+void fct_calibrateScale(){
+  fct_showText("Calib.","place 100g");
+  Serial.println("Start Calibration");
+  for(int i=0;i<20;i++){delay(100);}
+  scale.calibrate(calibrateToUnits,300000,0.05);
+  calFactorULong=(uint32_t)(scale.getCalFactor()*10.0);
+  NVS.setInt("calFactorULong",calFactorULong); 
+  Serial.println("Calibration Done:: calFactorULong: "+calFactorULong);
+  fct_showText("Done","");
+  for(int i=0;i<20;i++){delay(100);}
+  do_calibration=false;
+}
 
 // t is time in seconds = millis()/1000;
 char * TimeToString(unsigned long t)
@@ -216,11 +237,15 @@ void setup() {
   fct_powerResetTimer();
   powerTicker.attach(1, fct_powerDownTicker);
   // ---------------------
+  NVS.begin();
+  calFactorULong=NVS.getInt("calFactorULong"); 
+  // ---------------------
   // fct_showText("Scale...");
   fct_initScale();
   Serial.println("Setup: fct_initScale");
   //---------------------
   // fct_showText("Tare...");
+  scale.setCalFactor(calFactorULong/10.0);
   scale.tare(2, false, true, true);
   Serial.println("Setup: scale.tare");
 
@@ -266,6 +291,11 @@ void loop()
   if (millis() - lastVinRead >=(batReadInterval*1000)) {
         soc_battery = monitoring.getSOC();
         lastVinRead = millis(); 
+  }
+
+
+  if(do_calibration){
+    fct_calibrateScale();
   }
 
   // put your main code here, to run repeatedly:

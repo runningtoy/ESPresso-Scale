@@ -11,6 +11,7 @@ void fct_showText(String text);
 void fct_powerResetTimer();
 void fct_powerResetTimer(int t);
 void fct_timerMode();
+void fct_callCalibrateScale();
 
 
 /////////////////////////////////////////////////////////////////
@@ -56,7 +57,8 @@ void click_buttonTare(Button2& btn) {
 }
 void longClick_buttonTare(Button2& btn) {
     fct_powerResetTimer();
-    scale.tare(2, false, true, false);
+    fct_callCalibrateScale();
+    // scale.tare(2, false, true, false);
     Serial.println("buttonTare long click\n");
 }
 void doubleClick_buttonTare(Button2& btn) {
