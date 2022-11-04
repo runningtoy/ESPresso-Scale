@@ -55,16 +55,22 @@ float MONITORING::getVoltage() {
     }
   }
   // return roundToDecimal(readVoltage()*mlt,2);
-  return roundToDecimal((readVoltage()*mlt),2);
+  return (readVoltage()*2.21);
 }
+
+float MONITORING::mapf(float value, float fromLow, float fromHigh, float toLow, float toHigh) {
+  float result;
+  result = (value - fromLow) * (toHigh - toLow) / (fromHigh - fromLow) + toLow;
+  return result;
+} 
 
 int MONITORING::getSOC()
 {
-    long battery_percentage = map((long)(getVoltage()*1000),VOLTAGE_MIN,VOLTAGE_MAX,0,100);
+    float x=getVoltage();
+    float battery_percentage=mapf(x,3.2,3.8,0,100);
     if(battery_percentage>100){battery_percentage=100;}
     if(battery_percentage<0){battery_percentage=0;}
-    
-        return (int)battery_percentage;
+    return (int)round(battery_percentage);
 }
 
 String MONITORING::getResolutionLevel(float voltage) {

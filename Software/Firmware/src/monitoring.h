@@ -39,6 +39,7 @@ class MONITORING
   protected:    
     float roundToDecimal(double value, int dec);
     double readRaw();
+    float mapf(float value, float fromLow, float fromHigh, float toLow, float toHigh);
 
     uint8_t enablePin;
     uint8_t readPin;
