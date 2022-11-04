@@ -29,7 +29,7 @@
 #define POWERDOWNTIMER 60*5
 
 
-uint8_t batReadInterval = 30; //in seconds - defines how frequently we should read the voltage from our voltage divider.
+uint8_t batReadInterval = 10; //in seconds - defines how frequently we should read the voltage from our voltage divider.
 int soc_battery=0;
 String resolutionLevel = "";
 uint32_t lastActionMillis = 0; 

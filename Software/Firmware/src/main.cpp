@@ -4,8 +4,7 @@
 
 
 #include <Adafruit_GFX.h>
-#include <Fonts/FreeSans12pt7b.h>
-#include <Fonts/FreeSans9pt7b.h>
+#include "FreeSansBold9pt7b.h"
 #include <Adafruit_SSD1306.h>
 #include "defines.h"
 #include "scale.h"
@@ -62,6 +61,12 @@ void fct_powerResetTimer(){
    fct_powerResetTimer(POWERDOWNTIMER);
 }
 
+void fct_timerMode(){
+   start_timer=millis();
+   timermode=!timermode;
+
+}
+
 void fct_powerUp(){
   pinMode(POWERLATCH, OUTPUT);
   digitalWrite(POWERLATCH, HIGH);
@@ -110,7 +115,7 @@ void fct_initScale()
 charging getSOCIdx() {
   if (soc_battery < 10) {
     return BAT_EMPTY;
-  } else if (soc_battery < 50) {
+  } else if (soc_battery < 76) {
     return BAT_50;
   } else if (soc_battery < 101) {
     return BAT_100;
@@ -120,58 +125,66 @@ charging getSOCIdx() {
   return BAT_EMPTY;
 }
 
-void fct_showText(String text) {
-  display.clearDisplay();
-  display.setTextColor(SSD1306_WHITE);
-  // display.setFont(&FreeSans12pt7b);
-  display.setTextSize(2);
-  display.setCursor(10, 9);
-  display.println(text);
-  display.display();      // Show initial text
-  delay(100);
-}
 
 void fct_showText(String text,String text2) {
   display.clearDisplay();
   display.setTextColor(SSD1306_WHITE);
-  // display.setFont(&FreeSans12pt7b);
-  display.setTextSize(2);
-  display.setCursor(10, 2);
-  display.println(text);
+  display.setFont(&FreeSansBold9pt7b);
   display.setTextSize(1);
-  display.setCursor(10, DISPLAY_HEIGHT-8);
-  display.println(text2);
-  display.drawBitmap(int((128-25)), 16, battery[getSOCIdx()], 16, 16, WHITE);
-  display.display();      // Show initial text
-  delay(100);
-}
-
-
-void fct_showText(String text,charging soc) {
-  display.clearDisplay();
-  display.setTextColor(SSD1306_WHITE);
-  // display.setFont(&FreeSans12pt7b);
-  display.setTextSize(2);
-  display.setCursor(10, 2);
+  display.setCursor(10, DISPLAY_HEIGHT-19);  
   display.println(text);
-  // charging idx=getSOCIdx();
-  display.drawBitmap(int((128-120)), 16, battery[getSOCIdx()], 16, 16, WHITE);
 
-  // display.setTextSize(1);
-  // display.setCursor(10, DISPLAY_HEIGHT-8);
-  // display.println(text2);
+  if(timermode){
+     display.fillRect(0,DISPLAY_HEIGHT/2,DISPLAY_WIDTH,DISPLAY_HEIGHT,SSD1306_WHITE);
+     display.setTextColor(SSD1306_BLACK);
+     display.setFont(&FreeSansBold9pt7b);
+     display.setTextSize(1);
+     display.setCursor(10, DISPLAY_HEIGHT-2);
+     display.drawBitmap(int((128-25)), 16, battery[getSOCIdx()], 16, 16, SSD1306_BLACK);
+  }
+  else{
+     display.setFont();
+     display.setTextSize(1);
+     display.setCursor(10, DISPLAY_HEIGHT-8);
+     display.drawBitmap(int((128-25)), 16, battery[getSOCIdx()], 16, 16, SSD1306_WHITE);
+  }
+  display.println(text2);
   display.display();      // Show initial text
+  display.setFont();
+  display.setTextColor(SSD1306_WHITE);
   delay(100);
 }
 
 
+// t is time in seconds = millis()/1000;
+char * TimeToString(unsigned long t)
+{
+ static char str[12];
+ 
+//  long h = t / 3600;
+//  long d = h / 24;
+//  t = t % 3600;
+//  int m = t / 60;
+//  int s = t % 60;
+//  int ms = t / (24 * 60 * 60 * 1000UL);
 
-void fct_showNumber(double f) {
-   fct_showText(String(fct_roundToDecimal(f,2)));
+ unsigned long allSeconds=t/1000;
+ unsigned long runMillis=t%1000;
+
+//  sprintf(str, "%02ld:%02ld:%02d:%02d", d, h, m, s);
+ sprintf(str, "%03d.%03d\'\'", allSeconds, runMillis);
+ return str;
 }
 
 void fct_showGrammes(double f) {
-   fct_showText(String(fct_roundToDecimal(f,2))+" g","Bat: "+String(soc_battery)+"%");
+   if(timermode){
+      fct_showText(String(fct_roundToDecimal(f,2))+" g",String(TimeToString(millis()-start_timer)));
+   }
+   else
+   {
+      fct_showText(String(fct_roundToDecimal(f,2))+" g","Bat: "+String(soc_battery)+"%");
+   }
+   
   //  fct_showText(String(fct_roundToDecimal(f,2))+" g","Bat: "+monitoring.getResolutionLevel(vinVoltage));
 }
 
@@ -213,9 +226,9 @@ void setup() {
 
   //---------------------
   // fct_showText("Read Battery SOC...");
-  for(int i=0;i<5;i++){
+  for(int i=0;i<3;i++){
       soc_battery = monitoring.getSOC();
-      delay(10);
+      delay(30);
   }  
   //---------------------
   // fct_showText("Detach boot logo...");

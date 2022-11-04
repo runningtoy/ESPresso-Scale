@@ -10,6 +10,7 @@
 void fct_showText(String text);
 void fct_powerResetTimer();
 void fct_powerResetTimer(int t);
+void fct_timerMode();
 
 
 /////////////////////////////////////////////////////////////////
@@ -65,10 +66,12 @@ void doubleClick_buttonTare(Button2& btn) {
 
 void click_buttonTimer(Button2& btn) {
     fct_powerResetTimer();
+    fct_timerMode();
     Serial.println("buttonTimer click\n");
 }
 void longClick_buttonTimer(Button2& btn) {
     fct_powerResetTimer();
+    fct_timerMode();
     Serial.println("buttonTimer long click\n");
 }
 void doubleClick_buttonTimer(Button2& btn) {
