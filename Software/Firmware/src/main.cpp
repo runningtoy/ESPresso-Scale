@@ -168,7 +168,7 @@ void fct_calibrateScale(){
   fct_showText("Calib.","place 100g");
   Serial.println("Start Calibration");
   for(int i=0;i<20;i++){delay(100);}
-  scale.calibrate(calibrateToUnits,300000,0.05);
+  scale.calibrate(calibrateToUnits,120000,0.05);
   calFactorULong=(uint32_t)(scale.getCalFactor()*10.0);
   NVS.setInt("calFactorULong",calFactorULong); 
   Serial.println("Calibration Done:: calFactorULong: "+calFactorULong);
