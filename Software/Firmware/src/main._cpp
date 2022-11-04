@@ -1,0 +1,21 @@
+
+
+#include <Arduino.h>
+#include "MONITORING.h"
+
+MONITORING monitoring = MONITORING(23,36); //enable mosfet pin = 23, vin on gpio36
+
+void setup() {
+	
+  Serial.begin(115200);
+  Serial.println("Battery Demo");
+  
+}
+
+void loop() {
+  Serial.print("RAW:");Serial.print(monitoring.getRawRead());
+  Serial.print("\t\tReadV:");Serial.print(monitoring.readVoltage());
+  Serial.print("\t\tVBat:");Serial.print(monitoring.getVoltage());
+  Serial.print("\t\tSOC:");Serial.println(monitoring.getSOC());
+  delay(100);
+}

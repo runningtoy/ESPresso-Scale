@@ -4,6 +4,15 @@
 
 #include "monitoring.h"
 
+//https://en.ovcharov.me/2020/02/29/how-to-measure-battery-level-with-esp32-microcontroller/
+#define VOLTAGE_OUT(Vin) (((Vin) * R18) / (R17 + R18))
+#define VOLTAGE_MAX 3800
+#define VOLTAGE_MIN 3300
+#define ADC_REFERENCE 3900
+#define MILL_VOLTAGE_TO_ADC(in) ((ADC_REFERENCE * (in)) / 4096)
+
+#define BATTERY_MAX_ADC MILL_VOLTAGE_TO_ADC(VOLTAGE_OUT(VOLTAGE_MAX))
+#define BATTERY_MIN_ADC MILL_VOLTAGE_TO_ADC(VOLTAGE_OUT(VOLTAGE_MIN))
 
 MONITORING::MONITORING(uint8_t enable_pin, uint8_t read_pin)
 {
@@ -31,7 +40,8 @@ double MONITORING::readRaw() {
 double MONITORING::readVoltage(){
   double reading = readRaw();
   if(reading < 1 || reading > 4095) return 0;
-  return -0.000000000000016 * pow(reading,4) + 0.000000000118171 * pow(reading,3)- 0.000000301211691 * pow(reading,2)+ 0.001109019271794 * reading + 0.034143524634089;
+  // return -0.000000000000016 * pow(reading,4) + 0.000000000118171 * pow(reading,3)- 0.000000301211691 * pow(reading,2)+ 0.001109019271794 * reading + 0.034143524634089;
+  return MILL_VOLTAGE_TO_ADC(reading)/1000;
 }
 
 float MONITORING::getVoltage() {
@@ -44,7 +54,17 @@ float MONITORING::getVoltage() {
       mlt = 2; //default with 10K/10K
     }
   }
-  return roundToDecimal(readVoltage()*mlt,2);
+  // return roundToDecimal(readVoltage()*mlt,2);
+  return roundToDecimal((readVoltage()*mlt),2);
+}
+
+int MONITORING::getSOC()
+{
+    long battery_percentage = map((long)(getVoltage()*1000),VOLTAGE_MIN,VOLTAGE_MAX,0,100);
+    if(battery_percentage>100){battery_percentage=100;}
+    if(battery_percentage<0){battery_percentage=0;}
+    
+        return (int)battery_percentage;
 }
 
 String MONITORING::getResolutionLevel(float voltage) {

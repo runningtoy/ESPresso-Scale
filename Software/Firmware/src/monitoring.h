@@ -32,12 +32,14 @@ class MONITORING
     String getResolutionLevel(float voltage = -1);
     float getVoltage();
     double getRawRead();
+    int getSOC();
+    double readVoltage();
+
     
   protected:    
     float roundToDecimal(double value, int dec);
-    double readVoltage();
     double readRaw();
-    
+
     uint8_t enablePin;
     uint8_t readPin;
   

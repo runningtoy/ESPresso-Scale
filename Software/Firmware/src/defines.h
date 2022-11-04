@@ -26,11 +26,11 @@
 
 #define POWERLATCH 35
 #define LED 2
-#define POWERDOWNTIMER 100
+#define POWERDOWNTIMER 60*5
 
 
-uint8_t batReadInterval = 3; //in seconds - defines how frequently we should read the voltage from our voltage divider.
-float vinVoltage = 0.0;
+uint8_t batReadInterval = 30; //in seconds - defines how frequently we should read the voltage from our voltage divider.
+int soc_battery=0;
 String resolutionLevel = "";
 uint32_t lastActionMillis = 0; 
 bool snooze = false;
@@ -371,7 +371,6 @@ const unsigned char waitLogo[28] [128] PROGMEM = {
 }
 };
 
-
 enum charging {
     BAT_EMPTY = 0,
     BAT_25 = 1, 
@@ -380,7 +379,6 @@ enum charging {
     BAT_100 = 4,
     BAT_CHARGING = 5  
 };
-
 
 const unsigned char battery[6] [32] PROGMEM = {
 

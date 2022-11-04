@@ -107,6 +107,19 @@ void fct_initScale()
   // scale.tare(2, false, false, true);
 }
 
+charging getSOCIdx() {
+  if (soc_battery < 10) {
+    return BAT_EMPTY;
+  } else if (soc_battery < 50) {
+    return BAT_50;
+  } else if (soc_battery < 101) {
+    return BAT_100;
+  } else {
+    return BAT_EMPTY;
+  }
+  return BAT_EMPTY;
+}
+
 void fct_showText(String text) {
   display.clearDisplay();
   display.setTextColor(SSD1306_WHITE);
@@ -116,21 +129,6 @@ void fct_showText(String text) {
   display.println(text);
   display.display();      // Show initial text
   delay(100);
-}
-
-charging getSOCIdx() {
-  if (vinVoltage < VIN_MIN) {
-    return BAT_EMPTY;
-  } else if (vinVoltage < VIN_LOW) {
-    return BAT_25;
-  } else if (vinVoltage < VIN_OK) {
-    return BAT_50;
-  } else if (vinVoltage < VIN_GOOD) {
-    return BAT_100;
-  } else {
-    return BAT_EMPTY;
-  }
-  return BAT_EMPTY;
 }
 
 void fct_showText(String text,String text2) {
@@ -173,13 +171,13 @@ void fct_showNumber(double f) {
 }
 
 void fct_showGrammes(double f) {
-  //  fct_showText(String(fct_roundToDecimal(f,2))+" g","Bat: "+String(fct_roundToDecimal(vinVoltage,1)));
-   fct_showText(String(fct_roundToDecimal(f,2))+" g","Bat: "+monitoring.getResolutionLevel(vinVoltage));
+   fct_showText(String(fct_roundToDecimal(f,2))+" g","Bat: "+String(soc_battery)+"%");
+  //  fct_showText(String(fct_roundToDecimal(f,2))+" g","Bat: "+monitoring.getResolutionLevel(vinVoltage));
 }
 
 void fct_showTime(double f) {
-  //  fct_showText(String(fct_roundToDecimal(f,2))+" s","Bat: "+String(fct_roundToDecimal(vinVoltage,1)));
-   fct_showText(String(fct_roundToDecimal(f,2))+" s","Bat: "+monitoring.getResolutionLevel(vinVoltage));
+   fct_showText(String(fct_roundToDecimal(f,2))+" s","Bat: "+String(soc_battery)+"%");
+  //  fct_showText(String(fct_roundToDecimal(f,2))+" s","Bat: "+monitoring.getResolutionLevel(vinVoltage));
 }
 
 void fct_setupDisplay(){
@@ -212,6 +210,15 @@ void setup() {
   // fct_showText("Tare...");
   scale.tare(2, false, true, true);
   Serial.println("Setup: scale.tare");
+
+  //---------------------
+  // fct_showText("Read Battery SOC...");
+  for(int i=0;i<5;i++){
+      soc_battery = monitoring.getSOC();
+      delay(10);
+  }  
+  //---------------------
+  // fct_showText("Detach boot logo...");
   logoTicker.detach();
   //---------------------
 
@@ -224,6 +231,8 @@ uint32_t lastVinRead=0;
 void loop()
 {
   button_loop();
+
+  //---- Scale Loop
   if ((millis() - u_time >= 30))
   {
       double v=scale.readUnits(1);
@@ -232,18 +241,18 @@ void loop()
       u_time = millis(); 
   }
 
+  //---- Time Loop
   // if ((millis() - u_time >= 50) && (timermode))
   // {
   //     u_time = millis(); 
   //     fct_showTime(u_time-start_timer);
   // }
 
-  
+
+  //---- Battery Loop
   if (millis() - lastVinRead >=(batReadInterval*1000)) {
-        vinVoltage = monitoring.getVoltage();
-        // resolutionLevel = monitoring.getResolutionLevel(vinVoltage);
+        soc_battery = monitoring.getSOC();
         lastVinRead = millis(); 
-        // Serial.print(vinVoltage);Serial.print("V (");Serial.print(resolutionLevel);Serial.println(")");
   }
 
   // put your main code here, to run repeatedly:
