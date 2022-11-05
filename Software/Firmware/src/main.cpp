@@ -20,7 +20,7 @@ uint32_t powertimer=POWERDOWNTIMER;
 MONITORING monitoring = MONITORING(23,36); //enable mosfet pin = 23, vin on gpio36
 bool timermode=false;
 uint32_t start_timer=0;
-uint32_t calFactorULong=899313;
+uint32_t calFactorULong=CALFACTORDEFAULT;
 bool do_calibration=false;
 
 #include "mybuttons.h"

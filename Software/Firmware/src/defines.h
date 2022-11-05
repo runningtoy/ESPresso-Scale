@@ -32,6 +32,7 @@
 uint8_t batReadInterval = 10; //in seconds - defines how frequently we should read the voltage from our voltage divider.
 int soc_battery=0;
 #define CALIBRATIONWEIGHT 100 //Calibration weight in gramm
+#define CALFACTORDEFAULT 424066
 
 // ----------------------
 // 
