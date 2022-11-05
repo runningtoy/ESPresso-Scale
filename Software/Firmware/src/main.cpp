@@ -239,6 +239,7 @@ void fct_setupDisplay(){
         Serial.println("SSD1306 allocation failed");
       }
   display.display();
+  display.setRotation(2);
   display.clearDisplay();
 }
 
@@ -249,7 +250,6 @@ void setup() {
   fct_setupDisplay();
   Serial.println("Setup: fct_setupDisplay");
   //---------------------
-  // fct_showText("Init...");
   logoTicker.attach_ms(40, fct_bootLogo);
   button_setup();
   fct_powerResetTimer();
@@ -258,23 +258,19 @@ void setup() {
   NVS.begin();
   calFactorULong=NVS.getInt("calFactorULong"); 
   // ---------------------
-  // fct_showText("Scale...");
   fct_initScale();
   Serial.println("Setup: fct_initScale");
   //---------------------
-  // fct_showText("Tare...");
   scale.setCalFactor(calFactorULong/100.0);
   scale.tare(2, false, true, true);
   Serial.println("Setup: scale.tare");
 
   //---------------------
-  // fct_showText("Read Battery SOC...");
   for(int i=0;i<3;i++){
       soc_battery = monitoring.getSOC();
       delay(30);
   }  
   //---------------------
-  // fct_showText("Detach boot logo...");
   logoTicker.detach();
   //---------------------
 
@@ -288,22 +284,12 @@ void loop()
 {
   button_loop();
 
-  //---- Scale Loop
+  //---- Scale  Loop
   if ((millis() - u_time >= 30))
   {
-      double v=scale.readUnits(1);
-      fct_showGrammes(v);
-      // Serial.print(v);Serial.println(": readUnits");
+      fct_showGrammes(scale.readUnits(1));
       u_time = millis(); 
   }
-
-  //---- Time Loop
-  // if ((millis() - u_time >= 50) && (timermode))
-  // {
-  //     u_time = millis(); 
-  //     fct_showTime(u_time-start_timer);
-  // }
-
 
   //---- Battery Loop
   if (millis() - lastVinRead >=(batReadInterval*1000)) {
