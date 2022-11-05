@@ -20,7 +20,7 @@ uint32_t powertimer=POWERDOWNTIMER;
 MONITORING monitoring = MONITORING(23,36); //enable mosfet pin = 23, vin on gpio36
 bool timermode=false;
 uint32_t start_timer=0;
-uint32_t calFactorULong=0;
+uint32_t calFactorULong=899313;
 bool do_calibration=false;
 
 #include "mybuttons.h"
@@ -34,9 +34,6 @@ void fct_bootLogo(){
   count--;
   if (count<0) count = 26;
 }
-
-
-
 
 float fct_roundToDecimal(double value, int dec)
 {
@@ -160,20 +157,52 @@ void fct_showText(String text,String text2) {
   delay(100);
 }
 
+
+void fct_calibrationDisplay(){
+  switch (scale.getCalibrationStatus())
+  {
+  case calibrationStatus::ERROR:
+    fct_showText("ERROR!.","Timeout");
+    break;
+  case calibrationStatus::START:
+    fct_showText("Calibration","no weight!");
+    break;
+  case calibrationStatus::PLACE:
+    fct_showText("Calib. 1/4","place 100g");
+    break;
+  case calibrationStatus::STAGE_1:
+    fct_showText("Calib. 2/4","");
+    break;
+  case calibrationStatus::STAGE_2:
+    fct_showText("Calib. 3/4","");
+    break;
+  case calibrationStatus::STAGE_3:
+    fct_showText("Calib. 4/4","");
+    break;
+  case calibrationStatus::FINISHED:
+    fct_showText("Calib. Done","Finished");
+    break;
+  default:
+    break;
+  }
+}
+
 void fct_callCalibrateScale(){
   do_calibration=true;
 }
 
 void fct_calibrateScale(){
-  fct_showText("Calib.","place 100g");
+  timermode=false;
+  logoTicker.attach_ms(40, fct_calibrationDisplay);
   Serial.println("Start Calibration");
   for(int i=0;i<20;i++){delay(100);}
   scale.calibrate(calibrateToUnits,120000,0.05);
-  calFactorULong=(uint32_t)(scale.getCalFactor()*10.0);
+  calFactorULong=(uint32_t)(scale.getCalFactor()*100.0);
   NVS.setInt("calFactorULong",calFactorULong); 
-  Serial.println("Calibration Done:: calFactorULong: "+calFactorULong);
-  fct_showText("Done","");
+  Serial.println("Calibration Done:: calFactorULong: "+String(calFactorULong));
+    
   for(int i=0;i<20;i++){delay(100);}
+  logoTicker.detach();
   do_calibration=false;
 }
 
@@ -245,7 +274,7 @@ void setup() {
   Serial.println("Setup: fct_initScale");
   //---------------------
   // fct_showText("Tare...");
-  scale.setCalFactor(calFactorULong/10.0);
+  scale.setCalFactor(calFactorULong/100.0);
   scale.tare(2, false, true, true);
   Serial.println("Setup: scale.tare");
 

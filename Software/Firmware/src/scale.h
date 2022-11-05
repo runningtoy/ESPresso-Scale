@@ -16,6 +16,16 @@ const byte HISTORY_BUFF_LENGTH = 5;
 //const int coeff[HISTORY_BUFF_LENGTH] = {86,-142,-193,-126,0,126,193,142,-86};
 const int coeff[HISTORY_BUFF_LENGTH] = {1,-8,0,8,-1};
 
+enum calibrationStatus {
+      START,
+      PLACE, 
+      STAGE_1, 
+      STAGE_2,
+      STAGE_3,
+      FINISHED,
+      ERROR  
+};
+
 class SCALE
 {
 
@@ -52,6 +62,9 @@ class SCALE
     //keep in mind that even with huge dataset (100+ samples - see ADS1232.h) you cannot eliminate the 0.01 variation with 3.3V excitation. You only increase lag.
     //maximum sensitivity is optimized for 10SPS and minimum for 80SPS.  
     void setSensitivity(uint8_t sensitivity); 
+
+    //return calibration Status
+    calibrationStatus getCalibrationStatus();
     
 
     //STABILITY PARAMETERS // VALUES DEPEND ON YOUR LOAD CELL/PCB/SPEED // USE WITH CAUTION
@@ -142,7 +155,7 @@ class SCALE
     double lastMovingAverage = 0;
     double historyBufferAdd = 0;
     double historyBuffer[HISTORY_BUFF_LENGTH];
-    
+
   
   protected:
     ADS1232* adc;
@@ -151,6 +164,9 @@ class SCALE
     double lastUnitsRead = 0;
     bool calibrationMode = false;
     uint32_t zeroTrackingUntil = 0; //briefly enable zero tracking after a tare command.
+    calibrationStatus _calibrationStatus;
+    void setCalibrationStatus(calibrationStatus loc);
+
 };
 
 #endif

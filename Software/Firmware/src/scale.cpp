@@ -441,6 +441,7 @@ void SCALE::calibrateADC()
 void SCALE::calibrate(float targetWeight, int maxMillis, float targetDiff) 
 {  
   calibrationMode = true;
+  setCalibrationStatus(calibrationStatus::START);  
    Serial.println("calibrating...");
   for (uint8_t i=0;i<5;i++){
     tare(0,false,true,true);
@@ -452,18 +453,21 @@ void SCALE::calibrate(float targetWeight, int maxMillis, float targetDiff)
   //increase stableWeightDiff to 1g  
   stableWeightDiff = 1.0;
   //loop until settled
-  uint32_t elapsedTime = millis() - calibrationStartTime;  
+  uint32_t elapsedTime = millis() - calibrationStartTime;
+  setCalibrationStatus(calibrationStatus::PLACE);  
   while (!hasSettled || abs(weight) < 10.0) {
     weight = readUnits(1);   
     Serial.println("weight:" + String(weight)); 
     elapsedTime = millis() - calibrationStartTime;
     if (elapsedTime > maxMillis) {
        Serial.println("calibration failed");
+       setCalibrationStatus(calibrationStatus::ERROR);  
       return;
     }
   }
   
    Serial.println("calibration stage 1");
+   setCalibrationStatus(calibrationStatus::STAGE_1);
   float switchModeThreshold = targetWeight*0.05; //5%
   bool initAutoCalibrationComplete = false;
   bool fineTuneAutoCalibrationComplete = false;
@@ -496,6 +500,7 @@ void SCALE::calibrate(float targetWeight, int maxMillis, float targetDiff)
   switchModeThreshold = targetWeight*0.01; //1%
   
    Serial.println("calibration stage 2");
+   setCalibrationStatus(calibrationStatus::STAGE_2);
   while (!fineTuneAutoCalibrationComplete && elapsedTime<maxMillis) {
     weight = readUnits(1);
     if ( fabs(weight-targetWeight) <= switchModeThreshold) {
@@ -520,6 +525,7 @@ void SCALE::calibrate(float targetWeight, int maxMillis, float targetDiff)
   bool below = false;
   //finally, switch to 10SPS and do the final approach
    Serial.println("calibration stage 3");
+   setCalibrationStatus(calibrationStatus::STAGE_3);
    Serial.println("swithing to 10SPS");
   adc->setSpeed(10);
   bool resetStableWeightCounter = true;
@@ -552,6 +558,7 @@ void SCALE::calibrate(float targetWeight, int maxMillis, float targetDiff)
 
   if (elapsedTime>=maxMillis){
      Serial.println("calibration timed out...please increase time");
+     setCalibrationStatus(calibrationStatus::ERROR); 
   } else {
      Serial.println("final calibration completed...");
   }
@@ -559,6 +566,7 @@ void SCALE::calibrate(float targetWeight, int maxMillis, float targetDiff)
   adc->setSmoothing(oldSmoothing);  
   calibrationMode = false;
   autoTareUsed = true;
+  setCalibrationStatus(calibrationStatus::FINISHED);
    Serial.println("DONE");
 }
 
@@ -571,4 +579,14 @@ void SCALE::setCalFactor(float calFactor)
 float SCALE::getCalFactor()
 {
   return(adc->calFactor);
+}
+
+
+void SCALE::setCalibrationStatus(calibrationStatus loc){
+   _calibrationStatus=loc;
+}
+
+
+calibrationStatus SCALE::getCalibrationStatus(){
+  return _calibrationStatus;
 }
