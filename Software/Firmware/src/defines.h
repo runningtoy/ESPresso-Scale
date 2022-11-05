@@ -31,31 +31,14 @@
 
 uint8_t batReadInterval = 10; //in seconds - defines how frequently we should read the voltage from our voltage divider.
 int soc_battery=0;
-String resolutionLevel = "";
-uint32_t lastActionMillis = 0; 
-bool snooze = false;
-bool lightSleep = false;
-bool wakeup = false;
-bool calibrationMode = false;
-bool initialising = false;
-uint32_t beginTare = 0; //0 = do not tare, >0 tare when millis() = beginTare
-byte tareType = 0;
-bool calibrateTare = false;
-bool saveWeight = false;
-bool calibrating = false;
-float calibrateToUnits = 100;
-double gramsDbl = 0.0;
-String gramsStr = "";
-String timerStr = "";
-float timerInSeconds=0.0;
-bool deepSleepNow = false;
-uint8_t graphInSection = 0;
-bool resetWeightGraph = false;
+#define CALIBRATIONWEIGHT 100 //Calibration weight in gramm
 
-
-
-
-
+// ----------------------
+// 
+//  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// Further Scale Tweaking in scale.h
+// 
+// ----------------------
 
 
 

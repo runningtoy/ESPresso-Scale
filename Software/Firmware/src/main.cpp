@@ -196,7 +196,7 @@ void fct_calibrateScale(){
   logoTicker.attach_ms(40, fct_calibrationDisplay);
   Serial.println("Start Calibration");
   for(int i=0;i<20;i++){delay(100);}
-  scale.calibrate(calibrateToUnits,120000,0.05);
+  scale.calibrate(CALIBRATIONWEIGHT,120000,0.05);
   calFactorULong=(uint32_t)(scale.getCalFactor()*100.0);
   NVS.setInt("calFactorULong",calFactorULong); 
   Serial.println("Calibration Done:: calFactorULong: "+String(calFactorULong));
@@ -211,17 +211,9 @@ char * TimeToString(unsigned long t)
 {
  static char str[12];
  
-//  long h = t / 3600;
-//  long d = h / 24;
-//  t = t % 3600;
-//  int m = t / 60;
-//  int s = t % 60;
-//  int ms = t / (24 * 60 * 60 * 1000UL);
-
  unsigned long allSeconds=t/1000;
  unsigned long runMillis=t%1000;
 
-//  sprintf(str, "%02ld:%02ld:%02d:%02d", d, h, m, s);
  sprintf(str, "%03d.%03d\'\'", allSeconds, runMillis);
  return str;
 }
@@ -234,13 +226,10 @@ void fct_showGrammes(double f) {
    {
       fct_showText(String(fct_roundToDecimal(f,2))+" g","Bat: "+String(soc_battery)+"%");
    }
-   
-  //  fct_showText(String(fct_roundToDecimal(f,2))+" g","Bat: "+monitoring.getResolutionLevel(vinVoltage));
 }
 
 void fct_showTime(double f) {
    fct_showText(String(fct_roundToDecimal(f,2))+" s","Bat: "+String(soc_battery)+"%");
-  //  fct_showText(String(fct_roundToDecimal(f,2))+" s","Bat: "+monitoring.getResolutionLevel(vinVoltage));
 }
 
 void fct_setupDisplay(){
