@@ -48,19 +48,20 @@ void fct_powerDown(){
   digitalWrite(LED, LOW);
 }
 
-void fct_powerDownTicker(){
-  powertimer--;
-  if(powertimer<1){
-    fct_powerDown();
-  }
-}
-
 void fct_powerResetTimer(int t){
    powertimer=t;
 }
 
 void fct_powerResetTimer(){
    fct_powerResetTimer(POWERDOWNTIMER);
+}
+
+void fct_powerDownTicker(){
+  if(!scale.gethasSettled()){fct_powerResetTimer();}
+  powertimer--;
+  if(powertimer<1){
+    fct_powerDown();
+  }
 }
 
 void fct_timerMode(){
@@ -81,6 +82,12 @@ void fct_powerUp(){
   // ledcWrite(0, 10);
 }
 
+bool inRange(uint32_t val, uint32_t value, double range)
+{
+  uint32_t minimum=(uint32_t)(value*(1-range));
+  uint32_t maximum=(uint32_t)(value*(1+range));
+  return ((minimum <= val) && (val <= maximum));
+}
 
 
 void fct_initScale()
@@ -93,6 +100,17 @@ void fct_initScale()
   scale.begin(0, 128, DEFAULT_ADC_SPEED);
   scale.calibrateADC();
 
+
+  uint32_t _calFactorULong_=NVS.getInt("calFactorULong");
+  //set CalcFactor only if in a plausible
+  if(inRange(_calFactorULong_,NVS.getInt("validitycheck"),0.05)){
+    calFactorULong=_calFactorULong_;
+    scale.setCalFactor(calFactorULong/100.0);
+    Serial.println("setCalFactor: valid");
+  }
+  else{
+    Serial.println("setCalFactor: not valid");
+  }
 
   // //Apply scale options we got from EEPROM
   // scale.zeroRange = (float)settings.zeroRange / 100.0;
@@ -198,7 +216,8 @@ void fct_calibrateScale(){
   for(int i=0;i<20;i++){delay(100);}
   scale.calibrate(CALIBRATIONWEIGHT,120000,0.05);
   calFactorULong=(uint32_t)(scale.getCalFactor()*100.0);
-  NVS.setInt("calFactorULong",calFactorULong); 
+  NVS.setInt("calFactorULong",calFactorULong);
+  NVS.setInt("validitycheck",calFactorULong); 
   Serial.println("Calibration Done:: calFactorULong: "+String(calFactorULong));
     
   for(int i=0;i<20;i++){delay(100);}
@@ -256,12 +275,11 @@ void setup() {
   powerTicker.attach(1, fct_powerDownTicker);
   // ---------------------
   NVS.begin();
-  calFactorULong=NVS.getInt("calFactorULong"); 
   // ---------------------
   fct_initScale();
   Serial.println("Setup: fct_initScale");
   //---------------------
-  scale.setCalFactor(calFactorULong/100.0);
+  
   scale.tare(2, false, true, true);
   Serial.println("Setup: scale.tare");
 

@@ -236,6 +236,11 @@ int32_t  SCALE::readRaw(uint8_t samples){
   return adc->readRaw(samples);
 }
 
+
+bool SCALE::gethasSettled(){
+  return hasSettled;
+}
+
 double SCALE::readUnits(uint8_t samples)
 {
   double finalUnits = 0.0;

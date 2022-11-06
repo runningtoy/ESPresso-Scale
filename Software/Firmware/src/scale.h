@@ -47,6 +47,8 @@ class SCALE
     double readUnits(uint8_t samples);
     double lastUnits = 0;
     int32_t readRaw(uint8_t samples);
+
+    bool gethasSettled();
     
     
     int getAdcActualSPS();
