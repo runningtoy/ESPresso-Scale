@@ -1,4 +1,4 @@
-/*  
+/*
   ESPresso Scale
   Created by John Sartzetakis, Jan 2019
   Released into the public domain.
@@ -18,12 +18,12 @@ const int coeff[HISTORY_BUFF_LENGTH] = {1,-8,0,8,-1};
 
 enum calibrationStatus {
       START,
-      PLACE, 
-      STAGE_1, 
+      PLACE,
+      STAGE_1,
       STAGE_2,
       STAGE_3,
       FINISHED,
-      ERROR  
+      ERROR
 };
 
 class SCALE
@@ -33,24 +33,24 @@ class SCALE
     SCALE(uint8_t pdwn, uint8_t sclk, uint8_t dout, uint8_t a0, uint8_t spd, uint8_t gain1, uint8_t gain0, uint8_t temp); // constructor with full control
     SCALE(uint8_t pdwn, uint8_t sclk, uint8_t dout);                                                       // basic constructor
     void begin(uint8_t channel, uint8_t gain, uint8_t speed);
-    void setGain(uint8_t gain = 10); 
+    void setGain(uint8_t gain = 10);
     uint8_t getSpeed();
     void setSpeed(uint8_t sps = 10);                                                                    // 10 or 80 sps , default 10
-    void powerOn(); 
+    void powerOn();
     void powerOff(); //power off does put the ADC to sleep but does NOT shut down any LDO(s) you might have to power it up.
     void calibrateADC(); //this is the internal calibration method of the ADC , not the calculation of the calFactor. Invoked on powerOn() but you might want to manually run it if you detect erratic readings.
     void calibrate(float targetWeight, int maxMillis, float targetDiff); // this function will do a single point weight calibration
     void setCalFactor(float calFactor); // directly set your calfactor
     float getCalFactor();
     bool tare(byte type,bool saveWeight, bool autoTare, bool calibrate); //quick does not adds new read, just tares the last value.
-    
+
     double readUnits(uint8_t samples);
     double lastUnits = 0;
     int32_t readRaw(uint8_t samples);
 
     bool gethasSettled();
-    
-    
+
+
     int getAdcActualSPS();
 
     //Smoothing enables/disables high/low rejection and averaging of samples
@@ -58,16 +58,16 @@ class SCALE
     //But, if your goal is to have a very stable low range scale with very sensitive load cell (ex 100g), disable smoothing and increase readSamples.
     void setSmoothing(uint8_t smoothing);
     uint8_t getSmoothing();
-    
+
     //sensitivity < DATA_SET_MIN ==> maximizes samples (default is 20) ==> low responsiveness ==> don't do it for 10sps
     //sensitivity > DATA_SET_MAX ==> minimizes samples (default is 5) ==> high responsiveness ==> best for 10sps but try it for 80sps if you have a good load cell
     //keep in mind that even with huge dataset (100+ samples - see ADS1232.h) you cannot eliminate the 0.01 variation with 3.3V excitation. You only increase lag.
-    //maximum sensitivity is optimized for 10SPS and minimum for 80SPS.  
-    void setSensitivity(uint8_t sensitivity); 
+    //maximum sensitivity is optimized for 10SPS and minimum for 80SPS.
+    void setSensitivity(uint8_t sensitivity);
 
     //return calibration Status
     calibrationStatus getCalibrationStatus();
-    
+
 
     //STABILITY PARAMETERS // VALUES DEPEND ON YOUR LOAD CELL/PCB/SPEED // USE WITH CAUTION
     //Please be carefull when choosing these values.
@@ -81,7 +81,7 @@ class SCALE
     bool hasSettledQuick = false;
     uint16_t stableWeightCounterQuick = 0;
     float stableWeightSampleSizeMultiplierQuick = 0.5; //0.5*SPS , ~0.5s.
-    
+
     //the following option will also affect the sleep timer and the auto tare function of your scale. If you put 0.01 and your scale cannot stabilize within +/-0.01g, it will never sleep or auto tare.
     float stableWeightDiff = 0.05; // if last stableWeightSampleSize number of adc values(in units) are within +/-stableWeightDiff, hasSettled flag = true
 
@@ -94,15 +94,15 @@ class SCALE
     //Step 2-> refined approach using 80SPS => adding/subtracting 10 to calfactor => ends when our weight is within 1% of the target weight
     //Step 3-> final approach using 10SPS => adding/subtracting finetuneCalibrationAdj to calfactor => ends when our weight is within stableWeightDiff of the target weight
     float finetuneCalibrationAdj = 0.10;
-    
-    float zeroTracking = 0.05; //0=disabled, Auto tares scale when hasSettled and weight(grams) < zeroTracking    
+
+    float zeroTracking = 0.05; //0=disabled, Auto tares scale when hasSettled and weight(grams) < zeroTracking
     float zeroRange = 0.05; //if result (units) is within +/-zeroRange will be SHOWN as 0 (but not tared). It only affects the perceived stability around 0. Combine it with fakeStabilityRange for ultimate fakeness.
 
 
 
     // FAKE STABILITY PARAMETERS // Will NOT affect any useful function // Use without caution :)
     //Do not SHOW changes less than +/- fakeStabilityRange. This will not affect measurements. It will only make the user think that this scale is awesome(r).
-    float fakeStabilityRange = 0.1; 
+    float fakeStabilityRange = 0.1;
     uint8_t fakeDisplayLimit = 1; //how many seconds at most we will show this fake number before resetting? 1s is fine, we will have jumps only 1/second.
     double lastFakeRead = 0;
     uint32_t lastFakeRefresh = 0; //millis
@@ -118,7 +118,7 @@ class SCALE
     bool autoTare = true; // automatically tares the scale after settling time (see stableWeightSampleSize).
     bool autoTareNegative = false; // automatically tares the scale if returned value is <0 WITHOUT waiting to settle!
     bool autoTareUsed = false; //will auto tare only once after each manual tare.
-    float autoTareMinWeight = 10.0; //only auto tare if >autoTareMinWeight grams 
+    float autoTareMinWeight = 10.0; //only auto tare if >autoTareMinWeight grams
     double lastTareWeight = 0; //keeps the last settled weight before (auto)taring.
     double lastTareWeightRounded = 0; //keeps the last settled weight before (auto)taring.
 
@@ -142,7 +142,7 @@ class SCALE
     float timerStopWeight = 8.0; //do not stop timer unless > timerStopWeight grams
     float rocStartTimer = 0.5; //stop timer when roc < 1g/s
     float rocStopTimer = 1.0; //stop timer when roc < 1g/s
-    
+
 
     //rate of change interval is the interval of roc calculation in ms.
     //if you have 80SPS and your interval is 1000ms you will never detect correctly rapid changes in weight.
@@ -151,14 +151,14 @@ class SCALE
     uint16_t rocInterval = 50;
     float roc = 0.0; //rate of change , g per second
     uint32_t rocLastCheck = 0; // millis
-    
+
     uint8_t historyBuffTail = 0;
     uint8_t historyBuffLength = 0; //how many values in one second
     double lastMovingAverage = 0;
     double historyBufferAdd = 0;
     double historyBuffer[HISTORY_BUFF_LENGTH];
 
-  
+
   protected:
     ADS1232* adc;
     double roundToDecimal(double value, int dec);
