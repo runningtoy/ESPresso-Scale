@@ -20,7 +20,7 @@
 // #define SPIFFS_VERSION_STRING "____" STR(SPIFFHASH) "____"
 #define SPIFFS_VERSION_STRING OTA_VERSION_STRING
 
-
+#define TAG "esp32helper"
 
 String getMACaddress()
 {
@@ -33,20 +33,12 @@ String getMACaddress()
 
 void printMacAddress()
 {
-    byte mac[6];
-    WiFi.macAddress(mac);
-    Serial.print("MAC: ");
-    for (int i = 0; i < 5; i++)
-    {
-        Serial.print(mac[i], HEX);
-        Serial.print(":");
-    }
-    Serial.println(mac[5], HEX);
+    ESP_LOGI(TAG,"Mac:%s", getMACaddress().c_str());
 }
 
 
 void printSerialNumber(){
-    Serial.printf("\r\nS/N:%s:S/N\r\n", getMACaddress().c_str());
+    ESP_LOGI(TAG,"\r\nS/N:%s:S/N\r\n", getMACaddress().c_str());
 }
 
 

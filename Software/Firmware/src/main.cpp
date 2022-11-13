@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include "esp32Helper.h"
 #include <Wire.h>
 #include <Ticker.h>
 
@@ -11,6 +12,15 @@
 #define ADS1232
 #include "MONITORING.h"
 #include "ArduinoNvs.h"
+#include <AsyncTCP.h>
+#include <ESPAsyncWebServer.h>
+#include <AsyncElegantOTA.h>
+#include "credentials.h"
+
+
+AsyncWebServer server(80);
+// const char* ssid = SSID;
+// const char* password = PASSWORD;
 
 SCALE scale = SCALE(ADC_PDWN_PIN, ADC_SCLK_PIN, ADC_DOUT_PIN, ADC_A0_PIN, ADC_SPEED_PIN, ADC_GAIN1_PIN, ADC_GAIN0_PIN, ADC_TEMP_PIN);
 Adafruit_SSD1306 display(DISPLAY_WIDTH, DISPLAY_HEIGHT, &Wire, -1);
@@ -22,6 +32,9 @@ bool timermode=false;
 uint32_t start_timer=0;
 uint32_t calFactorULong=CALFACTORDEFAULT;
 bool do_calibration=false;
+bool activeWifi=false;
+
+uint32_t calibrationTimoutTime = 120000;
 
 #include "mybuttons.h"
 
@@ -32,7 +45,16 @@ void fct_bootLogo(){
   display.drawBitmap(int((128-32)/2), 0, waitLogo[count], 32, 32, WHITE);
   display.display();
   count--;
-  if (count<0) count = 26;
+  if (count<0) count = 27;
+}
+
+void fct_wifiLogo(){
+  display.clearDisplay();
+  // display count animation image
+  display.drawBitmap(int((128-32)/2), 0, wifiAnimation[count], 32, 32, WHITE);
+  display.display();
+  count--;
+  if (count<0) count = 27;
 }
 
 float fct_roundToDecimal(double value, int dec)
@@ -100,16 +122,15 @@ void fct_initScale()
   scale.begin(0, 128, DEFAULT_ADC_SPEED);
   scale.calibrateADC();
 
-
   uint32_t _calFactorULong_=NVS.getInt("calFactorULong");
   //set CalcFactor only if in a plausible
   if(inRange(_calFactorULong_,NVS.getInt("validitycheck"),0.05)){
     calFactorULong=_calFactorULong_;
     scale.setCalFactor(calFactorULong/100.0);
-    Serial.println("setCalFactor: valid");
+    ESP_LOGI("main","setCalFactor: valid");
   }
   else{
-    Serial.println("setCalFactor: not valid");
+    ESP_LOGI("main","setCalFactor: not valid");
   }
 
   // //Apply scale options we got from EEPROM
@@ -180,7 +201,8 @@ void fct_calibrationDisplay(){
   switch (scale.getCalibrationStatus())
   {
   case calibrationStatus::ERROR:
-    fct_showText("ERROR!.","Timeout");
+    fct_showText("ERROR!.","Timeout -> Retry");
+    calibrationTimoutTime=360000;
     break;
   case calibrationStatus::START:
     fct_showText("Calibration","no weight!");
@@ -212,13 +234,13 @@ void fct_callCalibrateScale(){
 void fct_calibrateScale(){
   timermode=false;
   logoTicker.attach_ms(40, fct_calibrationDisplay);
-  Serial.println("Start Calibration");
+  ESP_LOGD("main","Start Calibration");
   for(int i=0;i<20;i++){delay(100);}
-  scale.calibrate(CALIBRATIONWEIGHT,120000,0.05);
+  scale.calibrate(CALIBRATIONWEIGHT,calibrationTimoutTime,0.05);
   calFactorULong=(uint32_t)(scale.getCalFactor()*100.0);
   NVS.setInt("calFactorULong",calFactorULong);
   NVS.setInt("validitycheck",calFactorULong); 
-  Serial.println("Calibration Done:: calFactorULong: "+String(calFactorULong));
+  ESP_LOGD("main","Calibration Done:: calFactorULong: %d", calFactorULong);
     
   for(int i=0;i<20;i++){delay(100);}
   logoTicker.detach();
@@ -253,46 +275,81 @@ void fct_showTime(double f) {
 
 void fct_setupDisplay(){
   Wire.begin(DISPLAY_MOSI_PIN, DISPLAY_CLK_PIN);
-  Serial.println("Wire Init");
+  ESP_LOGV("main","Wire Init");
   if(!display.begin(SSD1306_SWITCHCAPVCC,0x3C)) {
-        Serial.println("SSD1306 allocation failed");
+        ESP_LOGE("main","SSD1306 allocation failed");
       }
   display.display();
   display.setRotation(2);
   display.clearDisplay();
 }
 
+void fct_setWifi()
+{
+  
+  ESP_LOGV("main", "activeWifi to: %d", activeWifi);
+  if (activeWifi)
+  {
+    logoTicker.detach();
+    logoTicker.attach_ms(40, fct_wifiLogo);
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(SSID, PASSWORD);
+
+    // Wait for connection
+    while (WiFi.status() != WL_CONNECTED)
+    {
+      delay(500);
+      ESP_LOGV("main", "Wait for connection");
+    }
+
+    ESP_LOGV("main", "Connected to: %s", SSID);
+    ESP_LOGV("main", "IP address:  %s", WiFi.localIP().toString().c_str());
+
+    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(200, "text/plain", "Hi! I am a Scale."); });
+
+    AsyncElegantOTA.begin(&server); // Start ElegantOTA
+    server.begin();
+    ESP_LOGV("main", "HTTP server started");
+    logoTicker.detach();
+  }
+}
 
 void setup() {
   fct_powerUp();
   Serial.begin(115200);
   fct_setupDisplay();
-  Serial.println("Setup: fct_setupDisplay");
+  ESP_LOGV("main","Setup: fct_setupDisplay");
   //---------------------
   logoTicker.attach_ms(40, fct_bootLogo);
   button_setup();
   fct_powerResetTimer();
   powerTicker.attach(1, fct_powerDownTicker);
+  activeWifi=wifiActivationRequested();
+  
+
   // ---------------------
   NVS.begin();
   // ---------------------
   fct_initScale();
-  Serial.println("Setup: fct_initScale");
+  ESP_LOGV("main","Setup: fct_initScale");
   //---------------------
   
   scale.tare(2, false, true, true);
-  Serial.println("Setup: scale.tare");
+  ESP_LOGV("main","Setup: scale.tare");
+  activeWifi=(activeWifi || wifiActivationRequested());
 
   //---------------------
   for(int i=0;i<3;i++){
       soc_battery = monitoring.getSOC();
       delay(30);
   }  
+  
   //---------------------
   logoTicker.detach();
   //---------------------
-
-  
+  fct_setWifi();
+   //---------------------
 }
 
 uint32_t u_time=0;

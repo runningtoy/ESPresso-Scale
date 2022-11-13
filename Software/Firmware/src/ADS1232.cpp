@@ -8,11 +8,11 @@
 // #define DEBUG
 
 #ifdef SERIAL_IF
-  #define LOG_PRINT(x) Serial.print(x)
-  #define LOG_PRINTLN(x) Serial.println(x)
+  #define LOG_PRINT(x) ESP_LOGV("ADS1232",x)
+  #define LOG_PRINTLN(x) ESP_LOGV("ADS1232",x)
   #ifdef DEBUG
-    #define DEBUG_PRINT(x) Serial.print(x)
-    #define DEBUG_PRINTLN(x) Serial.println(x)
+    #define DEBUG_PRINT(x) ESP_LOGV("ADS1232",x)
+    #define DEBUG_PRINTLN(x) ESP_LOGV("ADS1232",x)
   #else
     #define DEBUG_PRINT(x)
     #define DEBUG_PRINTLN(x)

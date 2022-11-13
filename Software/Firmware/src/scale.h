@@ -39,7 +39,7 @@ class SCALE
     void powerOn();
     void powerOff(); //power off does put the ADC to sleep but does NOT shut down any LDO(s) you might have to power it up.
     void calibrateADC(); //this is the internal calibration method of the ADC , not the calculation of the calFactor. Invoked on powerOn() but you might want to manually run it if you detect erratic readings.
-    void calibrate(float targetWeight, int maxMillis, float targetDiff); // this function will do a single point weight calibration
+    void calibrate(float targetWeight, u_int32_t maxMillis, float targetDiff); // this function will do a single point weight calibration
     void setCalFactor(float calFactor); // directly set your calfactor
     float getCalFactor();
     bool tare(byte type,bool saveWeight, bool autoTare, bool calibrate); //quick does not adds new read, just tares the last value.
