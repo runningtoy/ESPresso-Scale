@@ -6,3 +6,4 @@
 .code-workspace
 EspressoScale.code-workspace
 Software/Firmware/src/credentials.h
+Software/Firmware/src/main.cpp_

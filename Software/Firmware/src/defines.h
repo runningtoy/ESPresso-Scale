@@ -12,7 +12,7 @@
 #define ADC_TEMP_PIN 0 //tied to GND AIN1 in PRO
 
 #define DISPLAY_WIDTH 128 // display width, in pixels
-#define DISPLAY_HEIGHT 32
+#define DISPLAY_HEIGHT 64
 #define DISPLAY_MOSI_PIN 13 //SDA if using I2C
 #define DISPLAY_CLK_PIN 14 //SCL is using I2C
 

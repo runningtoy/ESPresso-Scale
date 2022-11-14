@@ -6,6 +6,9 @@
 
 #include <Adafruit_GFX.h>
 #include "FreeSansBold9pt7b.h"
+#include "FreeSansBold24pt7b.h"
+#include "FreeSansBold18pt7b.h"
+#include "FreeSansBold12pt7b.h"
 #include <Adafruit_SSD1306.h>
 #include "defines.h"
 #include "scale.h"
@@ -41,9 +44,9 @@ uint32_t calibrationTimoutTime = 120000;
 int count=26; 
 void fct_bootLogo(){
   display.clearDisplay();
-  // display count animation image
-  // display.drawBitmap(int((128-32)/2), 0, waitLogo[count], 32, 32, WHITE);
-  display.drawBitmap(int((128-32)/2), 0, coffee[count], 32, 32, WHITE);
+  int ico_width=32;
+  int ico_height=32;
+  display.drawBitmap(int((DISPLAY_WIDTH-ico_width)/2), int((DISPLAY_HEIGHT-ico_height)/2), coffee[count], ico_width, ico_height, WHITE);
   
   
   display.display();
@@ -54,7 +57,9 @@ void fct_bootLogo(){
 void fct_wifiLogo(){
   display.clearDisplay();
   // display count animation image
-  display.drawBitmap(int((128-32)/2), 0, wifiAnimation[count], 32, 32, WHITE);
+  int ico_width=32;
+  int ico_height=32;
+  display.drawBitmap(int((DISPLAY_WIDTH-ico_width)/2), int((DISPLAY_HEIGHT-ico_height)/2), wifiAnimation[count], ico_width, ico_height, WHITE);
   display.display();
   count--;
   if (count<0) count = 27;
@@ -111,7 +116,7 @@ bool inRange(uint32_t val, uint32_t value, double range)
 {
   uint32_t minimum=(uint32_t)(value*(1-range));
   uint32_t maximum=(uint32_t)(value*(1+range));
-  return ((minimum <= val) && (val <= maximum));
+  return ((minimum >= val) && (val <= maximum));
 }
 
 
@@ -173,28 +178,40 @@ charging getSOCIdx() {
 void fct_showText(String text,String text2) {
   display.clearDisplay();
   display.setTextColor(SSD1306_WHITE);
-  display.setFont(&FreeSansBold9pt7b);
+  display.setFont(&FreeSansBold12pt7b);
   display.setTextSize(1);
-  display.setCursor(10, DISPLAY_HEIGHT-19);  
+   
+
+
+  
+  int16_t x = 0;
+  int16_t y = 32;
+  int16_t x1 = 0;
+  int16_t y1 = 0;
+  u_int16_t th = 0;
+  u_int16_t tw = 0;
+  //------------------------
+  //for right alignement
+  display.getTextBounds(text, x, y, &x1, &y1, &tw, &th);
+  display.setCursor(DISPLAY_WIDTH-tw-10, 20);
   display.println(text);
 
   if(timermode){
      display.fillRect(0,DISPLAY_HEIGHT/2,DISPLAY_WIDTH,DISPLAY_HEIGHT,SSD1306_WHITE);
      display.setTextColor(SSD1306_BLACK);
-     display.setFont(&FreeSansBold9pt7b);
+     display.setFont(&FreeSansBold12pt7b);
      display.setTextSize(1);
-     display.setCursor(10, DISPLAY_HEIGHT-2);
-     display.drawBitmap(int((128-25)), 16, battery[getSOCIdx()], 16, 16, SSD1306_BLACK);
+     display.getTextBounds(text2, x, y, &x1, &y1, &tw, &th);
+     display.setCursor(DISPLAY_WIDTH-tw-10, DISPLAY_HEIGHT-9);
   }
   else{
-     display.setFont();
+     display.setFont(&FreeSansBold9pt7b);
      display.setTextSize(1);
-     display.setCursor(10, DISPLAY_HEIGHT-8);
-     display.drawBitmap(int((128-25)), 16, battery[getSOCIdx()], 16, 16, SSD1306_WHITE);
+     display.setCursor(5, DISPLAY_HEIGHT-4);  
+     display.drawBitmap(int((128-25)), DISPLAY_HEIGHT-2, battery[getSOCIdx()], 16, 16, SSD1306_WHITE);
   }
   display.println(text2);
   display.display();      // Show initial text
-  display.setFont();
   display.setTextColor(SSD1306_WHITE);
   delay(100);
 }
@@ -258,7 +275,7 @@ char * TimeToString(unsigned long t)
  unsigned long allSeconds=t/1000;
  unsigned long runMillis=t%1000;
 
- sprintf(str, "%03d.%03d\'\'", allSeconds, runMillis);
+ sprintf(str, "%d.%03d\'\'", allSeconds, runMillis);
  return str;
 }
 
