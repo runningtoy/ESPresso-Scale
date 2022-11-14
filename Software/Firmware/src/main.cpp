@@ -42,7 +42,10 @@ int count=26;
 void fct_bootLogo(){
   display.clearDisplay();
   // display count animation image
-  display.drawBitmap(int((128-32)/2), 0, waitLogo[count], 32, 32, WHITE);
+  // display.drawBitmap(int((128-32)/2), 0, waitLogo[count], 32, 32, WHITE);
+  display.drawBitmap(int((128-32)/2), 0, coffee[count], 32, 32, WHITE);
+  
+  
   display.display();
   count--;
   if (count<0) count = 27;
