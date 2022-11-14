@@ -208,7 +208,9 @@ void fct_showText(String text,String text2) {
      display.setFont(&FreeSansBold9pt7b);
      display.setTextSize(1);
      display.setCursor(5, DISPLAY_HEIGHT-4);  
-     display.drawBitmap(int((128-25)), DISPLAY_HEIGHT-2, battery[getSOCIdx()], 16, 16, SSD1306_WHITE);
+    //  display.drawBitmap(int((128-25)), DISPLAY_HEIGHT-2, battery[getSOCIdx()], 16, 16, SSD1306_WHITE);
+     display.drawBitmap(int((128-25)), DISPLAY_HEIGHT-18, battery[getSOCIdx()], 16, 16, SSD1306_WHITE);
+
   }
   display.println(text2);
   display.display();      // Show initial text
