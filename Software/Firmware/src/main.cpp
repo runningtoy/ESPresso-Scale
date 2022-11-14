@@ -6,8 +6,6 @@
 
 #include <Adafruit_GFX.h>
 #include "FreeSansBold9pt7b.h"
-#include "FreeSansBold24pt7b.h"
-#include "FreeSansBold18pt7b.h"
 #include "FreeSansBold12pt7b.h"
 #include <Adafruit_SSD1306.h>
 #include "defines.h"
