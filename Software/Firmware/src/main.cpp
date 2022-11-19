@@ -114,7 +114,7 @@ bool inRange(uint32_t val, uint32_t value, double range)
 {
   uint32_t minimum=(uint32_t)(value*(1-range));
   uint32_t maximum=(uint32_t)(value*(1+range));
-  return ((minimum >= val) && (val <= maximum));
+  return ((val>=minimum) && (val <= maximum));
 }
 
 
