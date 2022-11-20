@@ -40,6 +40,9 @@ int soc_battery=0;
 #define UDP_SERVER_IP "192.168.178.100" // UDP LOG Server
 #define UDP_SERVER_PORT 44444           // UDP Port Server
 
+#define DEFAULWIFI true
+
+
 // ----------------------
 // 
 //  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

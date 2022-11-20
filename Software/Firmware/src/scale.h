@@ -124,11 +124,7 @@ class SCALE
 
 
     int32_t getTimer(); //we allow negative values here since we allow a built in delay
-    // void startTimer(bool manual = false);
-    // void checkStopTimer();
-    // void stopTimer();
-    // void resetTimer();
-    // void startStopResetTimer();
+    
     uint8_t autoStartTimer = 0; //0 == off , 1==immediately after tare, 2==automaticaly with 1st drop
     bool autoStopTimer = false;
     bool manualTimer = true; //start with true to avoid trigger on boot
@@ -152,11 +148,7 @@ class SCALE
     float roc = 0.0; //rate of change , g per second
     uint32_t rocLastCheck = 0; // millis
 
-    uint8_t historyBuffTail = 0;
-    uint8_t historyBuffLength = 0; //how many values in one second
-    double lastMovingAverage = 0;
-    double historyBufferAdd = 0;
-    double historyBuffer[HISTORY_BUFF_LENGTH];
+   
 
 
   protected:

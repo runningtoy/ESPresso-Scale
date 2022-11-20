@@ -58,16 +58,6 @@ void SCALE::setGain(uint8_t gain)
   adc->setGain(gain);
 }
 
-//void SCALE::setScaleMode(uint8_t scalemode) {
-//  scaleMode=scalemode;
-//  switch (scalemode) {
-//    case 1 :
-//      autoTare = true;
-//      break;
-//    default :
-//      autoTare = false;    
-//  }
-//}
 
 void SCALE::setSensitivity(uint8_t sensitivity)
 {
@@ -179,11 +169,8 @@ double SCALE::readUnits(uint8_t samples)
       ESP_LOGD("SCALE", "Auto tare is enabled, taring...");   
          
       tare(0,true,true,false); //do a quick tare, save the weight to history, but without adc calibration
-      // if (autoStartTimer == 2) {
-      //   startTimer();
-      // } else if (autoStartTimer ==1) {
-      //   resetTimer();
-      // }
+      
+      
       autoTareUsed = true;
       units = 0.0;
     } else {      
@@ -244,14 +231,9 @@ double SCALE::readUnits(uint8_t samples)
 
   
   uint32_t rocMillis = millis();  
-//  if (rocMillis > rocLastCheck + rocInterval) {
-    //todo: something more sophisticated
-//    double movingAvg = historyBufferAdd/HISTORY_BUFF_LENGTH;
     roc = (finalUnits-lastUnits)*1000/(rocMillis - rocLastCheck);  
     rocLastCheck = rocMillis;
-//    lastMovingAverage = movingAvg;
-//    rocLastCheck = rocMillis + rocInterval;
-//  }
+
   
   lastUnits = finalUnits;
   return finalUnits;

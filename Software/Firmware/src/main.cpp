@@ -34,7 +34,7 @@ bool timermode=false;
 uint32_t start_timer=0;
 uint32_t calFactorULong=CALFACTORDEFAULT;
 bool do_calibration=false;
-bool activeWifi=false;
+bool activeWifi=DEFAULWIFI;
 
 uint32_t calibrationTimoutTime = 120000;
 
@@ -89,6 +89,7 @@ void fct_powerDownTicker(){
   if(!scale.gethasSettled()){fct_powerResetTimer();}
   powertimer--;
   if(powertimer<1){
+    ESP_LOGI("main", "power down");
     fct_powerDown();
   }
 }
@@ -133,7 +134,7 @@ void fct_initScale()
   //set CalcFactor only if in a plausible
   if(inRange(_calFactorULong_,NVS.getInt("validitycheck"),0.05)){
     calFactorULong=_calFactorULong_;
-    scale.setCalFactor(calFactorULong/100.0);
+    scale.setCalFactor(calFactorULong/10000.0);
     ESP_LOGI("main","setCalFactor: valid");
   }
   else{
@@ -265,7 +266,7 @@ void fct_calibrateScale()
   scale.calibrate(CALIBRATIONWEIGHT, calibrationTimoutTime, 0.05);
   if (scale.getCalibrationStatus() == calibrationStatus::FINISHED)
   {
-    calFactorULong = (uint32_t)(scale.getCalFactor() * 100.0);
+    calFactorULong = (uint32_t)(scale.getCalFactor() * 10000.0);
     NVS.setInt("calFactorULong", calFactorULong);
     NVS.setInt("validitycheck", calFactorULong);
     ESP_LOGD("main", "Calibration Done:: calFactorULong: %d", calFactorULong);
@@ -359,16 +360,22 @@ void fct_setWifi()
 void setup() {
   fct_powerUp();
   Serial.begin(115200);
+
+
+
   fct_setupDisplay();
   esp_log_level_set("*", CORE_DEBUG_LEVEL);
   ESP_LOGV("main","Setup: fct_setupDisplay");
+  //---------------------
+  #ifdef DEFAULWIFI   //if WiFi is enabled by default start it. otherwise after scale if requested. Good for debuggin
+    fct_setWifi();
+  #endif
   //---------------------
   logoTicker.attach_ms(40, fct_bootLogo);
   button_setup();
   fct_powerResetTimer();
   powerTicker.attach(1, fct_powerDownTicker);
-  activeWifi=wifiActivationRequested();
-  
+  activeWifi=(activeWifi || wifiActivationRequested());  
 
   // ---------------------
   NVS.begin();
@@ -390,7 +397,9 @@ void setup() {
   //---------------------
   logoTicker.detach();
   //---------------------
-  fct_setWifi();
+  #ifndef DEFAULWIFI
+    fct_setWifi();
+  #endif
    //---------------------
 }
 
