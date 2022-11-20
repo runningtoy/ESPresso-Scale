@@ -32,7 +32,12 @@ Main work is done by him! Thanks
 
   
 
-**Documentation**  
+**Documentation**
+*UDP LOGGING Bash*
+Command for UDP Logging
+```bash
+nc -u -l -p 44444
+```  
 
   
 
