@@ -17,6 +17,9 @@ Main work is done by him! Thanks
 - Touch buttons , using ESP32 pins or external touch module (TTP223).
 - 3d printed case (fusion360 files provided)
 - Auto power off and consumes no power when "sleep" to extend battery life
+- enable WiFi on demand (press both buttons during startup ) -> ```credentials.h```
+- OTA support (if WiFi enabled)
+- UDP Logging (if WiFi enabled) to ```UDP_SERVER_IP```
 
 
 
@@ -32,9 +35,9 @@ Main work is done by him! Thanks
 
   
 
-**Documentation**
-*UDP LOGGING Bash*
-Command for UDP Logging
+**Documentation**  
+*UDP LOGGING Bash*  
+Command for UDP Logging  
 ```bash
 nc -u -l -p 44444
 ```  
