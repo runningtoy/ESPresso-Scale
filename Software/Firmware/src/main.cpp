@@ -252,20 +252,31 @@ void fct_callCalibrateScale(){
   do_calibration=true;
 }
 
-void fct_calibrateScale(){
-  timermode=false;
+void fct_calibrateScale()
+{
+  timermode = false;
   logoTicker.attach_ms(40, fct_calibrationDisplay);
-  ESP_LOGD("main","Start Calibration");
-  for(int i=0;i<20;i++){delay(20);scale.readUnits(1);}
-  scale.calibrate(CALIBRATIONWEIGHT,calibrationTimoutTime,0.05);
-  calFactorULong=(uint32_t)(scale.getCalFactor()*100.0);
-  NVS.setInt("calFactorULong",calFactorULong);
-  NVS.setInt("validitycheck",calFactorULong); 
-  ESP_LOGD("main","Calibration Done:: calFactorULong: %d", calFactorULong);
-    
-  for(int i=0;i<20;i++){delay(100);}
+  ESP_LOGD("main", "Start Calibration");
+  for (int i = 0; i < 20; i++)
+  {
+    delay(20);
+    scale.readUnits(1);
+  }
+  scale.calibrate(CALIBRATIONWEIGHT, calibrationTimoutTime, 0.05);
+  if (scale.getCalibrationStatus() == calibrationStatus::FINISHED)
+  {
+    calFactorULong = (uint32_t)(scale.getCalFactor() * 100.0);
+    NVS.setInt("calFactorULong", calFactorULong);
+    NVS.setInt("validitycheck", calFactorULong);
+    ESP_LOGD("main", "Calibration Done:: calFactorULong: %d", calFactorULong);
+  }
+
+  for (int i = 0; i < 20; i++)
+  {
+    delay(100);
+  }
   logoTicker.detach();
-  do_calibration=false;
+  do_calibration = false;
 }
 
 // t is time in seconds = millis()/1000;

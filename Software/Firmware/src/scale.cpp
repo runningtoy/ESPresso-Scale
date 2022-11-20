@@ -389,7 +389,8 @@ void SCALE::calibrate(float targetWeight, u_int32_t maxMillis, float targetDiff)
 
   if (elapsedTime>=maxMillis){
      ESP_LOGE("SCALE","calibration timed out...please increase time");
-     setCalibrationStatus(calibrationStatus::ERROR); 
+     setCalibrationStatus(calibrationStatus::ERROR);
+     return;
   } else {
     ESP_LOGI("SCALE","final calibration completed...");
   }
