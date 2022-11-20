@@ -35,6 +35,11 @@ int soc_battery=0;
 #define CALIBRATIONWEIGHT 100 //Calibration weight in gramm
 #define CALFACTORDEFAULT 424066
 
+
+//UDP SETTINGS
+#define UDP_SERVER_IP "192.168.178.100" // UDP LOG Server
+#define UDP_SERVER_PORT 44444           // UDP Port Server
+
 // ----------------------
 // 
 //  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

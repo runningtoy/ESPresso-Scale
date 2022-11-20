@@ -28,7 +28,7 @@ Button2 buttonTimer;
 
 void click_buttonTare(Button2& btn) {
     // fct_powerResetTimer();
-    scale.tare(2, false, true, false);
+    // scale.tare(2, false, true, false);
     // ESP_LOGV("button","buttonTare click\n");
 }
 void longClick_buttonTare(Button2& btn) {
@@ -43,12 +43,12 @@ void doubleClick_buttonTare(Button2& btn) {
 
 void click_buttonTimer(Button2& btn) {
     // fct_powerResetTimer();
-    fct_timerMode();
+    // fct_timerMode();
     // ESP_LOGV("button","buttonTimer click\n");
 }
 void longClick_buttonTimer(Button2& btn) {
     // fct_powerResetTimer();
-    fct_timerMode();
+    // fct_timerMode();
     // ESP_LOGV("button","buttonTimer long click\n");
 }
 void doubleClick_buttonTimer(Button2& btn) {
@@ -99,6 +99,23 @@ void released(Button2 &btn)
             fct_callCalibrateScale();
         }
     }
+    else
+    {
+        if (btn == buttonTare)
+        {
+            ESP_LOGV("button","tareButton released");
+            for(int i=1;i<10;i++)
+            {
+                delay(50);
+            }
+            scale.tare(2, false, true, false);
+        }
+        if (btn == buttonTimer)
+        {
+             ESP_LOGV("button","timerButton released");
+             fct_timerMode();
+        }
+    }
     counter = 0;
 }
 
@@ -107,19 +124,19 @@ void released(Button2 &btn)
 void button_setup() {
   buttonTimer.begin(POWER_BUTTON_PIN,INPUT_PULLUP,false);
   
-  buttonTimer.setLongClickTime(MY_LONGCLICK_MS);
-  buttonTimer.setDoubleClickTime(MY_DOUBLECLICK_MS);
+//   buttonTimer.setLongClickTime(MY_LONGCLICK_MS);
+//   buttonTimer.setDoubleClickTime(MY_DOUBLECLICK_MS);
   
-  buttonTimer.setLongClickHandler(longClick_buttonTimer);  
-  buttonTimer.setClickHandler(click_buttonTimer);  
+//   buttonTimer.setLongClickHandler(longClick_buttonTimer);  
+//   buttonTimer.setClickHandler(click_buttonTimer);  
   //-----------------------------------------------
   buttonTare.begin(TARE_BUTTON_PIN,INPUT_PULLUP,false);
   
-  buttonTare.setLongClickTime(MY_LONGCLICK_MS);
-  buttonTare.setDoubleClickTime(MY_DOUBLECLICK_MS);
+//   buttonTare.setLongClickTime(MY_LONGCLICK_MS);
+//   buttonTare.setDoubleClickTime(MY_DOUBLECLICK_MS);
   
-  buttonTare.setLongClickHandler(longClick_buttonTare);  
-  buttonTare.setClickHandler(click_buttonTare);  
+//   buttonTare.setLongClickHandler(longClick_buttonTare);  
+//   buttonTare.setClickHandler(click_buttonTare);  
 
 
   buttonTimer.setPressedHandler(pressed);

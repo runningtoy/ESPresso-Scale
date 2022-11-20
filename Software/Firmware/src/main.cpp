@@ -3,7 +3,6 @@
 #include <Wire.h>
 #include <Ticker.h>
 
-
 #include <Adafruit_GFX.h>
 #include "FreeSansBold9pt7b.h"
 #include "FreeSansBold12pt7b.h"
@@ -17,6 +16,8 @@
 #include <ESPAsyncWebServer.h>
 #include <AsyncElegantOTA.h>
 #include "credentials.h"
+#include "udp_logging.h"
+#include "esp_log.h"
 
 
 AsyncWebServer server(80);
@@ -255,7 +256,7 @@ void fct_calibrateScale(){
   timermode=false;
   logoTicker.attach_ms(40, fct_calibrationDisplay);
   ESP_LOGD("main","Start Calibration");
-  for(int i=0;i<20;i++){delay(100);}
+  for(int i=0;i<20;i++){delay(20);scale.readUnits(1);}
   scale.calibrate(CALIBRATIONWEIGHT,calibrationTimoutTime,0.05);
   calFactorULong=(uint32_t)(scale.getCalFactor()*100.0);
   NVS.setInt("calFactorULong",calFactorULong);
@@ -322,6 +323,15 @@ void fct_setWifi()
       ESP_LOGV("main", "Wait for connection");
     }
 
+
+
+    ESP_LOGI("main", "Setup UDP to Server: %s & PORT: %d", UDP_SERVER_IP,UDP_SERVER_PORT);
+
+    IPAddress udpIP;
+    udpIP.fromString(UDP_SERVER_IP);
+    udp_logging_init(udpIP, UDP_SERVER_PORT, udp_logging_vprintf );
+
+
     ESP_LOGV("main", "Connected to: %s", SSID);
     ESP_LOGV("main", "IP address:  %s", WiFi.localIP().toString().c_str());
 
@@ -339,6 +349,7 @@ void setup() {
   fct_powerUp();
   Serial.begin(115200);
   fct_setupDisplay();
+  esp_log_level_set("*", CORE_DEBUG_LEVEL);
   ESP_LOGV("main","Setup: fct_setupDisplay");
   //---------------------
   logoTicker.attach_ms(40, fct_bootLogo);
