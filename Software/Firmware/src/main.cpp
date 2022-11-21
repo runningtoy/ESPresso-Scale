@@ -39,6 +39,7 @@ uint32_t calibrationTimoutTime = 120000;
 bool updateRunning = false;
 
 double currentScaleValue=0;
+double lastScaleValue=0;
 
 #include "mybuttons.h"
 
@@ -95,11 +96,14 @@ void fct_powerResetTimer()
 
 void fct_powerDownTicker()
 {
-  if (!scale.gethasSettled())
-  {
+  if(abs(currentScaleValue-lastScaleValue)>MINWEIGHTCHANGETOPREVENTSLEEP){
     fct_powerResetTimer();
   }
+  lastScaleValue=currentScaleValue;
+
   powertimer--;
+  ESP_LOGV("main", "power down timer %d",powertimer);
+
   if (powertimer < 1)
   {
     ESP_LOGI("main", "power down");
@@ -295,8 +299,14 @@ char *TimeToString(unsigned long t)
   return str;
 }
 
+int once_perSeconde=10;
 void fct_mainDisplay()
 {
+  once_perSeconde--;
+  if(once_perSeconde<0){
+    fct_powerDownTicker();
+    once_perSeconde=10;
+  }
   // wenn calibration
   if (do_calibration)
   {
@@ -399,7 +409,6 @@ void setup()
   displayTicker.attach_ms(40, fct_bootLogo);
   button_setup();
   fct_powerResetTimer();
-  powerTicker.attach(1, fct_powerDownTicker);
   activeWifi = (activeWifi || wifiActivationRequested());
 
   // ---------------------
@@ -428,7 +437,7 @@ void setup()
 #endif
   //---------------------
   //main display Ticker function
-  displayTicker.attach_ms(20, fct_mainDisplay);
+  displayTicker.attach_ms(100, fct_mainDisplay);
 }
 
 uint32_t u_time = 0;

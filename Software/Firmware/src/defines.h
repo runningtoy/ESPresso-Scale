@@ -42,7 +42,7 @@ int soc_battery=0;
 
 #define DEFAULWIFI true
 
-
+#define MINWEIGHTCHANGETOPREVENTSLEEP 2
 // ----------------------
 // 
 //  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
