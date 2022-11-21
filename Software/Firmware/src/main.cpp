@@ -154,6 +154,10 @@ void fct_initScale()
   {
     ESP_LOGI("main", "setCalFactor: not valid");
   }
+
+ scale.setSensitivity(120);
+ scale.setSmoothing(5);
+ scale.setSpeed(10);
 }
 
 charging getSOCIdx()
