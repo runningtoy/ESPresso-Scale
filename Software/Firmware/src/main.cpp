@@ -26,7 +26,7 @@ AsyncWebServer server(80);
 SCALE scale = SCALE(ADC_PDWN_PIN, ADC_SCLK_PIN, ADC_DOUT_PIN, ADC_A0_PIN, ADC_SPEED_PIN, ADC_GAIN1_PIN, ADC_GAIN0_PIN, ADC_TEMP_PIN);
 Adafruit_SSD1306 display(DISPLAY_WIDTH, DISPLAY_HEIGHT, &Wire, -1);
 Ticker powerTicker;
-Ticker logoTicker;
+Ticker displayTicker;
 uint32_t powertimer = POWERDOWNTIMER;
 MONITORING monitoring = MONITORING(23, 36); // enable mosfet pin = 23, vin on gpio36
 bool timermode = false;
@@ -37,6 +37,8 @@ bool activeWifi = DEFAULWIFI;
 
 uint32_t calibrationTimoutTime = 120000;
 bool updateRunning = false;
+
+double currentScaleValue=0;
 
 #include "mybuttons.h"
 
@@ -255,7 +257,6 @@ void fct_callCalibrateScale()
 void fct_calibrateScale()
 {
   timermode = false;
-  logoTicker.attach_ms(40, fct_calibrationDisplay);
   ESP_LOGD("main", "Start Calibration");
   for (int i = 0; i < 20; i++)
   {
@@ -275,7 +276,6 @@ void fct_calibrateScale()
   {
     delay(100);
   }
-  logoTicker.detach();
   do_calibration = false;
 }
 
@@ -291,23 +291,37 @@ char *TimeToString(unsigned long t)
   return str;
 }
 
-void fct_showScale(double f)
+void fct_mainDisplay()
 {
-  updateRunning = activeWifi && Update.isRunning();
+  // wenn calibration
+  if (do_calibration)
+  {
+    fct_calibrationDisplay();
+    return;
+  }
 
-  if (timermode && !updateRunning)
-  {
-    fct_showText(String(fct_roundToDecimal(f, 2)) + " g", String(TimeToString(millis() - start_timer)));
-  }
-  if (!timermode && !updateRunning)
-  {
-    fct_showText(String(fct_roundToDecimal(f, 2)) + " g", "Bat: " + String(soc_battery) + "%");
-  }
-  if (updateRunning)
+  // if update active
+  if (activeWifi && Update.isRunning())
   {
     double prog = Update.progress() / Update.size();
     fct_showText("FW upgr.", ":: => " + String(prog) + "%");
+    return;
   }
+
+  //if timermode
+  if (timermode)
+  {
+    fct_showText(String(fct_roundToDecimal(currentScaleValue, 2)) + " g", String(TimeToString(millis() - start_timer)));
+    return;
+  }
+
+  //if scale only
+  if (!timermode)
+  {
+    fct_showText(String(fct_roundToDecimal(currentScaleValue, 2)) + " g", "Bat: " + String(soc_battery) + "%");
+    return;
+  }
+  return;
 }
 
 void fct_showTime(double f)
@@ -334,8 +348,8 @@ void fct_setWifi()
   ESP_LOGV("main", "activeWifi to: %d", activeWifi);
   if (activeWifi)
   {
-    logoTicker.detach();
-    logoTicker.attach_ms(40, fct_wifiLogo);
+    displayTicker.detach();
+    displayTicker.attach_ms(40, fct_wifiLogo);
     WiFi.mode(WIFI_STA);
     WiFi.begin(SSID, PASSWORD);
 
@@ -361,7 +375,7 @@ void fct_setWifi()
     AsyncElegantOTA.begin(&server); // Start ElegantOTA
     server.begin();
     ESP_LOGV("main", "HTTP server started");
-    logoTicker.detach();
+    displayTicker.detach();
   }
 }
 
@@ -378,7 +392,7 @@ void setup()
   fct_setWifi();
 #endif
   //---------------------
-  logoTicker.attach_ms(40, fct_bootLogo);
+  displayTicker.attach_ms(40, fct_bootLogo);
   button_setup();
   fct_powerResetTimer();
   powerTicker.attach(1, fct_powerDownTicker);
@@ -403,12 +417,14 @@ void setup()
   }
 
   //---------------------
-  logoTicker.detach();
+  displayTicker.detach();
 //---------------------
 #ifndef DEFAULWIFI
   fct_setWifi();
 #endif
   //---------------------
+  //main display Ticker function
+  displayTicker.attach_ms(20, fct_mainDisplay);
 }
 
 uint32_t u_time = 0;
@@ -421,7 +437,7 @@ void loop()
   //---- Scale  Loop
   if ((millis() - u_time >= 30))
   {
-    fct_showScale(scale.readUnits(1));
+    currentScaleValue=scale.readUnits(1);
     u_time = millis();
   }
 
