@@ -33,7 +33,13 @@ bool timermode = false;
 uint32_t start_timer = 0;
 uint32_t calFactorULong = CALFACTORDEFAULT;
 bool do_calibration = false;
-bool activeWifi = DEFAULWIFI;
+
+
+#ifdef WIFIDEBUG
+bool activeWifi = 1;
+#else
+bool activeWifi = 0;
+#endif
 
 uint32_t calibrationTimoutTime = 120000;
 bool updateRunning = false;
@@ -395,10 +401,12 @@ void setup()
   Serial.begin(115200);
 
   fct_setupDisplay();
+#ifdef WIFIDEBUG // if WiFi is enabled by default start it. otherwise after scale if requested. Good for debugging
   esp_log_level_set("*", CORE_DEBUG_LEVEL);
+#endif
   ESP_LOGV("main", "Setup: fct_setupDisplay");
 //---------------------
-#ifdef DEFAULWIFI // if WiFi is enabled by default start it. otherwise after scale if requested. Good for debuggin
+#ifdef WIFIDEBUG // if WiFi is enabled by default start it. otherwise after scale if requested. Good for debugging
   fct_setWifi();
 #endif
   //---------------------
@@ -428,7 +436,7 @@ void setup()
   //---------------------
   displayTicker.detach();
 //---------------------
-#ifndef DEFAULWIFI
+#ifndef WIFIDEBUG
   fct_setWifi();
 #endif
   //---------------------
