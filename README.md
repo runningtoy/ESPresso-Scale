@@ -45,6 +45,12 @@ nc -u -l -p 44444
 ```  
 
   
+**Load Cell - Work in Progress**  
+Due to the issue (down) i try a new load cell - WIP    
+Mavin NA1 [https://www.mavin.cn/na1-oiml-c3-approved-load-cell-high-accuracy-single-point-sensor_p15.html]  
+
+**known Pitfall**  
+Repeatability [https://github.com/jousis9/ESPresso-Scale/issues/2#issue-1459375448]
 
 
 **Consider contributing**  
