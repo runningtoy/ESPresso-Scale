@@ -307,6 +307,7 @@ void fct_mainDisplay()
     fct_powerDownTicker();
     once_perSeconde=10;
   }
+
   // wenn calibration
   if (do_calibration)
   {
@@ -336,11 +337,6 @@ void fct_mainDisplay()
     return;
   }
   return;
-}
-
-void fct_showTime(double f)
-{
-  fct_showText(String(fct_roundToDecimal(f, 2)) + " s", "Bat: " + String(soc_battery) + "%");
 }
 
 void fct_setupDisplay()
@@ -445,6 +441,7 @@ uint32_t lastVinRead = 0;
 
 void loop()
 {
+  //---- Button  Loop
   button_loop();
 
   //---- Scale  Loop
@@ -461,6 +458,8 @@ void loop()
     lastVinRead = millis();
   }
 
+
+  //---- Call Calibration if requested
   if (do_calibration)
   {
     fct_calibrateScale();

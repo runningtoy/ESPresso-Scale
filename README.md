@@ -6,6 +6,8 @@ Fully open source (s/w & h/w) scale project.
 Main work is done by him! Thanks
 
   
+![Scale](Hardware/scale.jpg)  
+
 
 **Features**
 - Open source firmware, software and hardware
