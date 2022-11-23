@@ -13,7 +13,7 @@ Main work is done by him! Thanks
 - Open source firmware, software and hardware
 - ESP32 (wroom module) MCU
 - ADS1232 24-bit ADC from TI
-- Lipo and USB powered
+- Lipo and USB powered (I connected a wireless charging pad)
 - 10SPS and 80SPS sampling speed with various options regarding filtering/smoothing
 - Auto calibration function (selectable weight)
 - Touch buttons , using ESP32 pins or external touch module (TTP223).
