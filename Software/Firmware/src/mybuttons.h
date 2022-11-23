@@ -37,8 +37,15 @@ void longClick_buttonTare(Button2& btn) {
     // ESP_LOGV("button","buttonTare long click\n");
 }
 void doubleClick_buttonTare(Button2& btn) {
-    // fct_powerResetTimer();
-    // ESP_LOGV("button","buttonTare double click\n");
+    if (btn == buttonTare)
+        {
+            ESP_LOGV("button","tareButton double clicked");
+            for(int i=1;i<10;i++)
+            {
+                delay(50);
+            }
+            scale.tare(2, false, true, false);
+        }
 }
 
 void click_buttonTimer(Button2& btn) {
@@ -101,15 +108,15 @@ void released(Button2 &btn)
     }
     else
     {
-        if (btn == buttonTare)
-        {
-            ESP_LOGV("button","tareButton released");
-            for(int i=1;i<10;i++)
-            {
-                delay(50);
-            }
-            scale.tare(2, false, true, false);
-        }
+        // if (btn == buttonTare)
+        // {
+        //     ESP_LOGV("button","tareButton released");
+        //     for(int i=1;i<10;i++)
+        //     {
+        //         delay(50);
+        //     }
+        //     scale.tare(2, false, true, false);
+        // }
         if (btn == buttonTimer)
         {
              ESP_LOGV("button","timerButton released");
@@ -137,7 +144,9 @@ void button_setup() {
   
 //   buttonTare.setLongClickHandler(longClick_buttonTare);  
 //   buttonTare.setClickHandler(click_buttonTare);  
-
+  
+//   buttonTare.setDebounceTime(100);
+  buttonTare.setDoubleClickHandler(doubleClick_buttonTare);
 
   buttonTimer.setPressedHandler(pressed);
   buttonTare.setPressedHandler(pressed);

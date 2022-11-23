@@ -117,7 +117,7 @@ class SCALE
     //COFFEE FEATURES
     bool autoTare = true; // automatically tares the scale after settling time (see stableWeightSampleSize).
     bool autoTareNegative = false; // automatically tares the scale if returned value is <0 WITHOUT waiting to settle!
-    bool autoTareUsed = false; //will auto tare only once after each manual tare.
+    bool autoTareUsed = false; //will auto tare only once after boot.
     float autoTareMinWeight = 10.0; //only auto tare if >autoTareMinWeight grams
     double lastTareWeight = 0; //keeps the last settled weight before (auto)taring.
     double lastTareWeightRounded = 0; //keeps the last settled weight before (auto)taring.

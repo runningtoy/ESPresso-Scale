@@ -96,8 +96,7 @@ bool  SCALE::tare(byte type, bool saveWeight, bool autoTare, bool calibrate)
   stableWeightCounterQuick = 65535;
   lastStableWeight = 0;
   if (!autoTare) {
-    autoTareUsed = false;
-    // resetTimer();
+    // autoTareUsed = false;  // enable this line if autotare should be allowed after each manual tare
     zeroTrackingUntil = millis() + 1000; //enable zeroTracking for 1s
   }
   return true;
