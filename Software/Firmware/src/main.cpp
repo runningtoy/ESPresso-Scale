@@ -473,5 +473,4 @@ void loop()
     fct_calibrateScale();
   }
 
-  // put your main code here, to run repeatedly:
 }

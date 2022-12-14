@@ -11,6 +11,7 @@ void fct_powerResetTimer();
 void fct_powerResetTimer(int t);
 void fct_timerMode();
 void fct_callCalibrateScale();
+void fct_powerDown(); 
 
 
 /////////////////////////////////////////////////////////////////
@@ -37,15 +38,7 @@ void longClick_buttonTare(Button2& btn) {
     // ESP_LOGV("button","buttonTare long click\n");
 }
 void doubleClick_buttonTare(Button2& btn) {
-    if (btn == buttonTare)
-        {
-            ESP_LOGV("button","tareButton double clicked");
-            for(int i=1;i<10;i++)
-            {
-                delay(50);
-            }
-            scale.tare(2, false, true, false);
-        }
+           
 }
 
 void click_buttonTimer(Button2& btn) {
@@ -97,7 +90,8 @@ void released(Button2 &btn)
             display.clearDisplay();
             NVS.eraseAll();
             NVS.setInt("calFactorULong",0);
-            NVS.setInt("validitycheck",32767); 
+            NVS.setInt("validitycheck",32767);
+            fct_powerDown(); 
             ESPHardRestart();
         }
         if ((millis() - now) > 2000) //if both buttons pressed at the same time for longer then xx ms then enter calibration mode
@@ -108,15 +102,15 @@ void released(Button2 &btn)
     }
     else
     {
-        // if (btn == buttonTare)
-        // {
-        //     ESP_LOGV("button","tareButton released");
-        //     for(int i=1;i<10;i++)
-        //     {
-        //         delay(50);
-        //     }
-        //     scale.tare(2, false, true, false);
-        // }
+        if (btn == buttonTare)
+        {
+            ESP_LOGV("button","tareButton released");
+            for(int i=1;i<5;i++)
+            {
+                scale.readUnits(1);
+            }
+            scale.tare(2, false, true, false);
+        }
         if (btn == buttonTimer)
         {
              ESP_LOGV("button","timerButton released");
@@ -145,9 +139,8 @@ void button_setup() {
 //   buttonTare.setLongClickHandler(longClick_buttonTare);  
 //   buttonTare.setClickHandler(click_buttonTare);  
   
-//   buttonTare.setDebounceTime(100);
-  buttonTare.setDoubleClickHandler(doubleClick_buttonTare);
-
+  buttonTare.setDebounceTime(200);
+  
   buttonTimer.setPressedHandler(pressed);
   buttonTare.setPressedHandler(pressed);
 

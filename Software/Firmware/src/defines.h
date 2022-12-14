@@ -18,8 +18,8 @@
 
 #define INITIALISING_SECS 5 //high or low for enable ??? Check datasheet of your LDO.
 
-#define  POWER_BUTTON_PIN 32
-#define  TARE_BUTTON_PIN 33
+#define  POWER_BUTTON_PIN 33
+#define  TARE_BUTTON_PIN 32
 #define  SECONDARY1_BUTTON_PIN  12
 
 
