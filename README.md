@@ -30,9 +30,8 @@ Main work is done by him! Thanks
 - [Schematics (PDF)](./Hardware/Schematics)
 - [PCB easyEDA project export](./Hardware/easyEDA)
 - Fusion 360 project file for the cases
-- Assembly guide (basic)
-- Bill of materials (BOM)
-- Firmware (Platform.io IDE project)
+- [Bill of materials (BOM)](./Hardware/Documents)
+- [Firmware (Platform.io IDE project)](./Software/Firmware)
 
 
   
