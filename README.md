@@ -57,7 +57,7 @@ nc -u -l -p 44444
 
   
 **License**  
-![OSHW Certification](Hardware/OSHW_mark_GR000002_medium.png)  
+<!-- ![OSHW Certification](Hardware/OSHW_mark_GR000002_medium.png)   -->
 Software under [GPL v3](https://gitlab.com/jousis/espresso-scale/blob/master/LICENSE)  
 Hardware under [CERN Open Hardware Licence v1.2](https://gitlab.com/jousis/espresso-scale/blob/master/hw-LICENSE)  
 Documentation under [CC BY-SA license 2.0](https://creativecommons.org/licenses/by-sa/2.0/)
