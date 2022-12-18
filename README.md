@@ -26,13 +26,13 @@ Main work is done by him! Thanks
 
 
 **What is provided ?**
-- PCB assembly guide
-- Schematics (PDF)
-- PCB easyEDA project export
+- [PCB assembly guide](./Hardware/Documents)
+- [Schematics (PDF)](./Hardware/Schematics)
+- [PCB easyEDA project export](./Hardware/easyEDA)
 - Fusion 360 project file for the cases
 - Assembly guide (basic)
 - Bill of materials (BOM)
-- Firmware (Arduino IDE project)
+- Firmware (Platform.io IDE project)
 
 
   
