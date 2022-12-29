@@ -29,7 +29,7 @@ Main work is done by him! Thanks
 - [PCB assembly guide](./Hardware/Documents)
 - [Schematics (PDF)](./Hardware/Schematics)
 - [PCB easyEDA project export](./Hardware/easyEDA)
-- Fusion 360 project file for the cases
+- [Fusion 360 project file for the cases](./Hardware/case)
 - [Bill of materials (BOM)](./Hardware/Documents)
 - [Firmware (Platform.io IDE project)](./Software/Firmware)
 
@@ -46,7 +46,8 @@ nc -u -l -p 44444
   
 **Load Cell - Work in Progress**  
 *Due to the issue (down) i try a new load cell - WIP*
-[Mavin NA1](https://www.mavin.cn/na1-oiml-c3-approved-load-cell-high-accuracy-single-point-sensor_p15.html)
+[Mavin NA1](https://www.mavin.cn/na1-oiml-c3-approved-load-cell-high-accuracy-single-point-sensor_p15.html) and 
+[Mavin MV-NA27-2KG](https://www.mavin.cn/kitchen-scale-load-cell-low-capacity-weight-sensor-na27_p28.html)
 
 **known Pitfall**  
 [Repeatability](https://github.com/jousis9/ESPresso-Scale/issues/2#issue-1459375448)
