@@ -20,7 +20,7 @@ Main work is done by him! Thanks
 - 3d printed case (fusion360 files provided)
 - Auto power off and consumes no power when "sleep" to extend battery life
 - enable WiFi on demand (press both buttons during startup ) -> ```credentials.h```
-- OTA support (if WiFi enabled)
+- OTA support (if WiFi enabled) -> ```http://SCALEIP/update```
 - UDP Logging (if WiFi enabled) to ```UDP_SERVER_IP```
 
 

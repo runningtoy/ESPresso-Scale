@@ -95,8 +95,8 @@ class SCALE
     //Step 3-> final approach using 10SPS => adding/subtracting finetuneCalibrationAdj to calfactor => ends when our weight is within stableWeightDiff of the target weight
     float finetuneCalibrationAdj = 0.10;
 
-    float zeroTracking = 0.05; //0=disabled, Auto tares scale when hasSettled and weight(grams) < zeroTracking
-    float zeroRange = 0.05; //if result (units) is within +/-zeroRange will be SHOWN as 0 (but not tared). It only affects the perceived stability around 0. Combine it with fakeStabilityRange for ultimate fakeness.
+    float zeroTracking = 0.1; //0=disabled, Auto tares scale when hasSettled and weight(grams) < zeroTracking
+    float zeroRange = 0.1; //if result (units) is within +/-zeroRange will be SHOWN as 0 (but not tared). It only affects the perceived stability around 0. Combine it with fakeStabilityRange for ultimate fakeness.
 
 
 

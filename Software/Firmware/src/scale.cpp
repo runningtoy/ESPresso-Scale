@@ -257,6 +257,9 @@ void SCALE::calibrate(float targetWeight, u_int32_t maxMillis, float targetDiff)
   calibrationMode = true;
   setCalibrationStatus(calibrationStatus::START);  
   ESP_LOGI("SCALE","calibrating...");
+  for (uint8_t i=0;i<10;i++){
+    delay(100);
+  }
   for (uint8_t i=0;i<5;i++){
     tare(0,false,true,true);
     delay(100);
