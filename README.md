@@ -50,11 +50,11 @@ nc -u -l -p 44444
 [Mavin MV-NA27-2KG](https://www.mavin.cn/kitchen-scale-load-cell-low-capacity-weight-sensor-na27_p28.html)
 
 **known Pitfall**  
-[Repeatability](https://github.com/jousis9/ESPresso-Scale/issues/2#issue-1459375448)
-To avoid it I used an alloy beam as a carrier and glued the top part of the case on the beam
-![xCut](Hardware/case/images/XCut.PNG =250x)
-![Beam](Hardware/case/images/Beam.png =250x)    
-
+[Repeatability](https://github.com/jousis9/ESPresso-Scale/issues/2#issue-1459375448)  
+To avoid it I used an alloy beam as a carrier and glued the top part of the case on the beam  
+<p>
+<img src="Hardware/case/images/XCut.PNG" width="350px">
+<img src="Hardware/case/images/Beam.png" width="350px">
 
 **Consider contributing**  
 
