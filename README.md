@@ -51,6 +51,9 @@ nc -u -l -p 44444
 
 **known Pitfall**  
 [Repeatability](https://github.com/jousis9/ESPresso-Scale/issues/2#issue-1459375448)
+To avoid it I used an alloy beam as a carrier and glued the top part of the case on the beam
+![xCut](Hardware/case/images/XCut.PNG =250x)
+![Beam](Hardware/case/images/Beam.png =250x)    
 
 
 **Consider contributing**  
