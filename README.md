@@ -48,6 +48,7 @@ nc -u -l -p 44444
 *Due to the issue (down) i try a new load cell - WIP*
 [Mavin NA1](https://www.mavin.cn/na1-oiml-c3-approved-load-cell-high-accuracy-single-point-sensor_p15.html) and 
 [Mavin MV-NA27-2KG](https://www.mavin.cn/kitchen-scale-load-cell-low-capacity-weight-sensor-na27_p28.html)
+<img src="Hardware/case/images/XCut2.PNG" width="350px">
 
 **known Pitfall**  
 [Repeatability](https://github.com/jousis9/ESPresso-Scale/issues/2#issue-1459375448)  
