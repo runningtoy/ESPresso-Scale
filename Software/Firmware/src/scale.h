@@ -83,7 +83,7 @@ class SCALE
     float stableWeightSampleSizeMultiplierQuick = 0.5; //0.5*SPS , ~0.5s.
 
     //the following option will also affect the sleep timer and the auto tare function of your scale. If you put 0.01 and your scale cannot stabilize within +/-0.01g, it will never sleep or auto tare.
-    float stableWeightDiff = 0.05; // if last stableWeightSampleSize number of adc values(in units) are within +/-stableWeightDiff, hasSettled flag = true
+    float stableWeightDiff = 0.1; // if last stableWeightSampleSize number of adc values(in units) are within +/-stableWeightDiff, hasSettled flag = true
 
 
     //in the final phase of calibration, we add/substract this amount from our calibration factor until we swing around our target weight.
