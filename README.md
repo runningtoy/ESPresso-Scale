@@ -44,10 +44,9 @@ nc -u -l -p 44444
 ```  
 
   
-**Load Cell - Work in Progress**  
-*Due to the issue (down) i try a new load cell - WIP*
-[Mavin NA1](https://www.mavin.cn/na1-oiml-c3-approved-load-cell-high-accuracy-single-point-sensor_p15.html) and 
-[Mavin MV-NA27-2KG](https://www.mavin.cn/kitchen-scale-load-cell-low-capacity-weight-sensor-na27_p28.html)
+**Load Cell**  
+- [ ] [Mavin NA1](https://www.mavin.cn/na1-oiml-c3-approved-load-cell-high-accuracy-single-point-sensor_p15.html) *(WIP)* and 
+- [x] [Mavin MV-NA27-2KG](https://www.mavin.cn/kitchen-scale-load-cell-low-capacity-weight-sensor-na27_p28.html)
 <img src="Hardware/case/images/XCut2.PNG" width="350px">
 
 **known Pitfall**  
