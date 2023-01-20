@@ -147,6 +147,8 @@ void fct_initScale()
 {
   pinMode(ADC_LDO_EN_PIN, OUTPUT);
   digitalWrite(ADC_LDO_EN_PIN, ADC_LDO_ENABLE);
+
+
   const uint8_t DEFAULT_ADC_SPEED = 10; // 10 or 80
   //--------
   scale.begin(0, 128, DEFAULT_ADC_SPEED);

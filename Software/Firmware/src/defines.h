@@ -1,6 +1,9 @@
 #define ADC_LDO_EN_PIN 21
 #define ADC_LDO_ENABLE 1 //high or low for enable ??? Check datasheet of your LDO.
 #define ADC_LDO_DISABLE 0 //high or low for disable ??? Check datasheet of your LDO.
+
+
+
   
 #define ADC_PDWN_PIN 5
 #define ADC_DOUT_PIN 19
@@ -8,7 +11,9 @@
 #define ADC_GAIN0_PIN 16
 #define ADC_GAIN1_PIN 17
 #define ADC_SPEED_PIN 22
-#define ADC_A0_PIN 0 //tied to GND AIN1 in PRO
+
+#define ADC_A0_PIN 0 //tied to GND AIN1 in orginal PCB -> 0 means disable the Channel select
+// #define ADC_A0_PIN 27 //in my one tied to GPIO 27 to enable dual scale
 #define ADC_TEMP_PIN 0 //tied to GND AIN1 in PRO
 
 #define DISPLAY_WIDTH 128 // display width, in pixels
@@ -33,8 +38,8 @@
 uint8_t batReadInterval = 10; //in seconds - defines how frequently we should read the voltage from our voltage divider.
 int soc_battery=0;
 #define CALIBRATIONWEIGHT 100 //Calibration weight in gramm
-#define CALFACTORDEFAULT 424066
-
+// #define CALFACTORDEFAULT 424066   //for my MARVIN NA1 better default  7101991
+#define CALFACTORDEFAULT 7101991   //for my MARVIN NA1 better default  7101991
 
 //UDP SETTINGS
 #define UDP_SERVER_IP "192.168.178.100" // UDP LOG Server
