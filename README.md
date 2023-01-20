@@ -30,7 +30,7 @@ Main work is done by him! Thanks
 - [Schematics (PDF)](./Hardware/Schematics)
 - [PCB easyEDA project export](./Hardware/easyEDA)
 - [Fusion 360 project file for the cases](./Hardware/case)
-- [Bill of materials (BOM)](./Hardware/Documents)
+- [Bill of materials (BOM)](./Hardware/Documents) *wip*
 - [Firmware (Platform.io IDE project)](./Software/Firmware)
 
 
@@ -45,7 +45,7 @@ nc -u -l -p 44444
 
   
 **Load Cell**  
-- [ ] [Mavin NA1](https://www.mavin.cn/na1-oiml-c3-approved-load-cell-high-accuracy-single-point-sensor_p15.html) *(WIP)* and 
+- [x] [Mavin NA1](https://www.mavin.cn/na1-oiml-c3-approved-load-cell-high-accuracy-single-point-sensor_p15.html) and 
 - [x] [Mavin MV-NA27-2KG](https://www.mavin.cn/kitchen-scale-load-cell-low-capacity-weight-sensor-na27_p28.html)
 <img src="Hardware/case/images/XCut2.PNG" width="350px">
 
@@ -55,6 +55,10 @@ To avoid it I used an aluminum beam as a carrier and glued the top part of the c
 <p>
 <img src="Hardware/case/images/XCut.PNG" width="350px">
 <img src="Hardware/case/images/Beam.png" width="350px">
+  
+[Case and mounting]()  
+due to sensibility of the scale use the most flexible cables and smallest possible diamater. Stiff cables can lead to extra force on the load cell which makes it useless. I used [AWG30 silicon cables](https://www.amazon.de/Fermerry-Litzendraht-verzinnte-Kupferdrahtspule-Elektrokabel-Kit/dp/B09BFQMWL4/ref=sr_1_3?__mk_de_DE=%C3%85M%C3%85%C5%BD%C3%95%C3%91&keywords=AWG30&qid=1674220803&sr=8-3)
+
 
 **Consider contributing**  
 
