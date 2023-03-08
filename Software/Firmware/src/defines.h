@@ -32,7 +32,10 @@
 // #define POWERLATCH 35
 #define POWERLATCH 4
 #define LED 2
-#define POWERDOWNTIMER 60*3
+#define POWERDOWNTIMER 60*2
+
+
+#define WATCHDOGTIMEOUT 16 //secondes
 
 
 uint8_t batReadInterval = 10; //in seconds - defines how frequently we should read the voltage from our voltage divider.

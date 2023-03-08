@@ -18,6 +18,8 @@
 #include "credentials.h"
 #include "udp_logging.h"
 #include "esp_log.h"
+#include "esp_system.h"
+
 
 AsyncWebServer server(80);
 // const char* ssid = SSID;
@@ -36,7 +38,7 @@ bool do_calibration = false;
 
 
 #ifdef WIFIDEBUG
-bool activeWifi = 1;
+bool activeWifi = 0;
 #else
 bool activeWifi = 0;
 #endif
@@ -48,6 +50,30 @@ double currentScaleValue=0;
 double lastScaleValue=0;
 
 #include "mybuttons.h"
+
+
+const int wdtTimeout = WATCHDOGTIMEOUT*1000;  //time in ms to trigger the watchdog
+hw_timer_t *wdtTimer = NULL;
+
+void ARDUINO_ISR_ATTR resetModule() {
+  ets_printf("reboot\n");
+  digitalWrite(POWERLATCH, LOW);
+  esp_restart();
+}
+
+void fct_setupWatchdog(){
+  wdtTimer = timerBegin(0, 80, true);                  //timer 0, div 80
+  timerAttachInterrupt(wdtTimer, &resetModule, true);  //attach callback
+  timerAlarmWrite(wdtTimer, wdtTimeout * 1000, false); //set time in us
+  timerAlarmEnable(wdtTimer);                   //enable interrupt
+}
+
+void fct_feedWatchdog(){
+  timerWrite(wdtTimer, 0); //reset timer (feed watchdog)
+  ESP_LOGV("fct_feedWatchdog", "feed Watchdog");
+}
+
+
 
 int count = 26;
 void fct_bootLogo()
@@ -106,6 +132,9 @@ void fct_powerDownTicker()
     fct_powerResetTimer();
   }
   lastScaleValue=currentScaleValue;
+
+  //feed Watchdog
+  fct_feedWatchdog();
 
   powertimer--;
   ESP_LOGV("main", "power down timer %d",powertimer);
@@ -404,6 +433,8 @@ void setup()
 {
   fct_powerUp();
   Serial.begin(115200);
+  fct_setupWatchdog();
+  fct_feedWatchdog();
 
   fct_setupDisplay();
 #ifdef WIFIDEBUG // if WiFi is enabled by default start it. otherwise after scale if requested. Good for debugging
@@ -423,6 +454,7 @@ void setup()
   // ---------------------
   NVS.begin();
   // ---------------------
+  fct_feedWatchdog();
   fct_initScale();
   ESP_LOGV("main", "Setup: fct_initScale");
   //---------------------
@@ -437,7 +469,7 @@ void setup()
     soc_battery = monitoring.getSOC();
     delay(30);
   }
-
+  fct_feedWatchdog();
   //---------------------
   displayTicker.detach();
 //---------------------
@@ -475,7 +507,9 @@ void loop()
   //---- Call Calibration if requested
   if (do_calibration)
   {
+    timerAlarmDisable(wdtTimer);   
     fct_calibrateScale();
+    timerAlarmEnable(wdtTimer);
   }
 
 }
