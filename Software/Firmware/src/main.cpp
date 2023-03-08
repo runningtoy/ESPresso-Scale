@@ -38,7 +38,7 @@ bool do_calibration = false;
 
 
 #ifdef WIFIDEBUG
-bool activeWifi = 0;
+bool activeWifi = 1;
 #else
 bool activeWifi = 0;
 #endif
